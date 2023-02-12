@@ -1,7 +1,5 @@
 # Geo Assist
 
----
-
 ## What is it?
 Geo assist is library that allows users to perform insertion and query operations on the spatial data. 
 
@@ -10,6 +8,17 @@ It enables users to create a spatial engine by loading objects with spatial refe
 The goal of this project is to enable the use of complex search algorithms, by tweaking them for geo-spatial operations.
 
 ## How to?
+
+### Installation:
+Geo-assist is available on maven repository and can be imported to your project. 
+
+```xml
+<dependency>
+    <groupId>com.thegeekyasian</groupId>
+    <artifactId>geo-assist</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ### K-d Tree:
 
@@ -40,7 +49,5 @@ List<KDTreeObject<String, Object>> nearestNeighbors =
 ```
 
 This is how simple it has been made to query your geo-spatial data.
-
-The project is yet in progress to be made available through the central repository though.
 
 Feel free to [contact me](https://thegeekyasian.com/contact/) or write me an email at [hello@thegeekyasian.com](mailto:hello@thegeekyasian.com)
