@@ -26,16 +26,20 @@ K-d Tree, formally called K-Dimensional Trees, are one of the best options when 
 
 I have provided an implementation of storing objects in a K-d tree using the coordinates and searching nearest neighbors for the provided location (latitude/longitude) and the distance.
 
+#### Initialization
+
 Here is how to initialize your data:
 
 ``` java
-KDTree<String, Object> kdTree = new KDTree<>();
-kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("5")
+KDTree<Long, Object> kdTree = new KDTree<>();
+kdTree.insert(new KDTreeObject.Builder<Long, Object>()
+				.id(5)
 				.latitude(25.2002450)
 				.longitude(55.2734184)
 				.build());
 ```
+
+#### Insertion
 
 Once you have inserted your object(s) in the tree, here is how you can search for the nearest neighbors for a provided location:
 
@@ -44,8 +48,16 @@ Point point = new Point.Builder()
 				.latitude(25.2012544)
 				.longitude(55.2569389)
 				.build();
-List<KDTreeObject<String, Object>> nearestNeighbors = 
+List<KDTreeObject<Long, Object>> nearestNeighbors = 
         kdTree.findNearestNeighbor(point, 2); // 2 kilometers based on haversine distance.
+```
+
+#### Deletion
+
+You can delete the object based on the custom identifier `ID`:
+
+``` java
+boolean ok = kdTree.delete(5);
 ```
 
 This is how simple it has been made to query your geo-spatial data.
