@@ -9,14 +9,14 @@ The goal of this project is to enable the use of complex search algorithms, by t
 
 ## How to?
 
-### Installation:
+### Install:
 Geo-assist is available on maven repository and can be imported to your project. 
 
 ```xml
 <dependency>
     <groupId>com.thegeekyasian</groupId>
     <artifactId>geo-assist</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ K-d Tree, formally called K-Dimensional Trees, are one of the best options when 
 
 I have provided an implementation of storing objects in a K-d tree using the coordinates and searching nearest neighbors for the provided location (latitude/longitude) and the distance.
 
-#### Initialization
+#### Insert
 
 Here is how to initialize your data:
 
@@ -39,7 +39,7 @@ kdTree.insert(new KDTreeObject.Builder<Long, Object>()
 				.build());
 ```
 
-#### Insertion
+#### Find Nearest Neighbors
 
 Once you have inserted your object(s) in the tree, here is how you can search for the nearest neighbors for a provided location:
 
@@ -52,7 +52,7 @@ List<KDTreeObject<Long, Object>> nearestNeighbors =
         kdTree.findNearestNeighbor(point, 2); // 2 kilometers based on haversine distance.
 ```
 
-#### Deletion
+#### Delete
 
 You can delete the object based on the custom identifier `ID`:
 
