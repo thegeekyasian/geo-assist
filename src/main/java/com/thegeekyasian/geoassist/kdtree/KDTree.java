@@ -242,7 +242,7 @@ public class KDTree<T, O> {
 		double lat2 = point2.getLatitude();
 		double lon2 = point2.getLongitude();
 
-		double R = 6371; // radius of Earth in kilometers
+		double R = 6378.137; // radius of Earth in kilometers WGS84
 		double dLat = Math.toRadians(lat2 - lat1);
 		double dLon = Math.toRadians(lon2 - lon1);
 		lat1 = Math.toRadians(lat1);
