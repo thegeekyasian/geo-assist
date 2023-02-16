@@ -59,8 +59,9 @@ public class KDTree<T, O> implements Serializable {
 
 	private void insertObject(KDTreeObject<T, O> object) {
 
+		int depth = 0;
 		if (root == null) {
-			KDTreeNode<T, O> node = new KDTreeNode<>(object, null);
+			KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, null);
 			root = node;
 			map.put(object.getId(), node);
 			return;
@@ -95,9 +96,10 @@ public class KDTree<T, O> implements Serializable {
 
 			// Move to the alternate dimension and continue the iteration
 			isLatitude = !isLatitude;
+			depth++;
 		}
 
-		KDTreeNode<T, O> node = new KDTreeNode<>(object, parent);
+		KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, parent);
 		map.put(object.getId(), node);
 
 		if (isLessThanCurrentValue) {
@@ -276,6 +278,122 @@ public class KDTree<T, O> implements Serializable {
 			node.setKdTreeObject(minNode.getKdTreeObject());
 			deleteNode(minNode);
 		}
+	}
+
+	/**
+	 *
+	 * <p>
+	 *     Returns whether the KDTree is balanced. A KDTree is considered balanced if
+	 *     the depth of any two leaf nodes differs by no more than 1. The method
+	 *     determines if the tree is balanced by recursively traversing the tree and
+	 *     checking the depths of each subtree.
+	 * </p>
+	 *
+	 * <p>
+	 *     The method has a time complexity of O(N) in the best case scenario,
+	 *     where the tree is perfectly balanced, and O(N log N) in the worst case scenario,
+	 *     where the tree is completely unbalanced.
+	 * </p>
+	 *
+	 * @return true if the tree is balanced, false otherwise.
+	 */
+	public boolean isBalanced() {
+		return isBalanced(root) != -1;
+	}
+
+	private int isBalanced(KDTreeNode<T, O> node) {
+		// If the current node is null, return 0.
+		if (node == null) {
+			return 0;
+		}
+
+		// Recursively call isBalanced on the left subtree, obtaining its depth.
+		int leftDepth = isBalanced(node.getLeft());
+
+		// If the left subtree is unbalanced (depth of -1), return -1 to indicate that the current subtree is also unbalanced.
+		if (leftDepth == -1) {
+			return -1;
+		}
+
+		// Recursively call isBalanced on the right subtree, obtaining its depth.
+		int rightDepth = isBalanced(node.getRight());
+
+		// If the right subtree is unbalanced (depth of -1), return -1 to indicate that the current subtree is also unbalanced.
+		if (rightDepth == -1) {
+			return -1;
+		}
+
+		// Check if the current subtree is balanced by comparing the depths of the left and right subtrees.
+		if (Math.abs(leftDepth - rightDepth) > 1) {
+			// If the current subtree is unbalanced, return -1 to indicate that the current subtree is unbalanced.
+			return -1;
+		}
+
+		// If the current subtree is balanced, return its depth.
+		return Math.max(leftDepth, rightDepth) + 1;
+	}
+
+	/**
+	 * <p>
+	 *     Balances the k-d tree to ensure efficient query performance.
+	 *     A k-d tree can become unbalanced if the order of
+	 *     point insertion is coherent (e.g. monotonic in one or both dimensions).
+	 *     An unbalanced tree may have a much deeper
+	 *     depth than a balanced tree, which can lead to slower query performance.
+	 *     This method reorders the nodes in the tree to improve balance and reduce depth,
+	 *     improving query performance.
+	 *     This method does not affect the values or coordinates of the nodes in the tree.
+	 *</p>
+	 * <p>
+	 *     This method should be called after all nodes have been inserted into the tree,
+	 *     and can be called multiple times if the tree becomes unbalanced after
+	 *     subsequent insertions or removals.
+	 *     This method has a time complexity of O(N log N),
+	 *     where N is the number of nodes in the tree.
+	 * </p>
+	 *
+	 */
+	public void balance() {
+		// If the tree is empty, there's nothing to balance
+		if (root == null) {
+			return;
+		}
+
+		// Build an array of all nodes in the tree
+		List<KDTreeNode<T, O>> nodeList = new ArrayList<>();
+		collectNodes(nodeList);
+
+		// Sort the nodes by their x-coordinate and y-coordinate, alternately
+		nodeList.sort(new NodeComparator<>());
+
+		// Rebuild the tree by recursively dividing the array and creating sub-trees
+		root = buildTree(nodeList, null, 0, nodeList.size() - 1, 0);
+	}
+
+	private void collectNodes(List<KDTreeNode<T, O>> nodeList) {
+		if (map.isEmpty()) {
+			return;
+		}
+		nodeList.addAll(map.values());
+	}
+
+	private KDTreeNode<T, O> buildTree(List<KDTreeNode<T, O>> nodeList, KDTreeNode<T, O> parent,
+			int start, int end, int depth) {
+		if (start > end) {
+			return null;
+		}
+
+		int mid = start + (end - start) / 2;
+		KDTreeNode<T, O> node = nodeList.get(mid);
+
+		int nextDepth = depth + 1;
+
+		node.setDepth(depth);
+		node.setParent(parent);
+		node.setLeft(buildTree(nodeList, node, start, mid - 1, nextDepth));
+		node.setRight(buildTree(nodeList, node, mid + 1, end, nextDepth));
+
+		return node;
 	}
 
 	private double getHaversineDistance(Point point1, Point point2) {
