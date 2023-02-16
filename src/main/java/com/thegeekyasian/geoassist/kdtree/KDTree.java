@@ -1,5 +1,6 @@
 package com.thegeekyasian.geoassist.kdtree;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,16 @@ import com.thegeekyasian.geoassist.core.GeoAssistException;
 /**
  * @author thegeekyasian
  *
+ * This is an implementation of a two-dimensional KD-Tree that enables
+ * efficient range searching and lookup for point data. Points can be
+ * dynamically inserted into the tree to build it. The KD-Tree supports
+ * point equality queries and range queries, providing fast retrieval of the data.
+ *
+ * It is important to note that the structure of a KD-Tree is dependent on the
+ * order insertion. If points are inserted in a coherent manner
+ * (such as being monotonic in one or both dimensions), the tree may become unbalanced.
+ * This can greatly impact the efficiency of queries.
+ *
  * @param <T>
  *     describes the identifier of the K-d Tree Object,
  *     that is being inserted in the tree. For example ID or UUID of the Object.
@@ -19,11 +30,17 @@ import com.thegeekyasian.geoassist.core.GeoAssistException;
  *     describes the object that is inserted in the tree.
  *     For example Vendor, Restaurant, Franchise, etc.
  */
-public class KDTree<T, O> {
-	private Node root;
+public class KDTree<T, O> implements Serializable {
 
-	private final Map<T, Node> map = new HashMap<>();
+	private static final long serialVersionUID = 5020274653621814765L;
 
+	private KDTreeNode<T, O> root;
+
+	private final Map<T, KDTreeNode<T, O>> map = new HashMap<>();
+
+	/**
+	 * Creates a new instance of KDTree.
+	 * */
 	public KDTree() {
 		this.root = null;
 	}
@@ -37,34 +54,57 @@ public class KDTree<T, O> {
 	 * identifier along with the Point (latitude/longitude coordinates) of the object.
 	 * */
 	public void insert(KDTreeObject<T, O> kdTreeObject) {
-		root = insert(root, kdTreeObject, null, 0);
+		insertObject(kdTreeObject);
 	}
 
-	private Node insert(Node current, KDTreeObject<T, O> kdTreeObject, Node parent, int level) {
-		// base case: if current node is null, return new node with point
-		if (current == null) {
-			Node node = new Node(kdTreeObject, parent);
-			map.put(kdTreeObject.getId(), node);
-			return node;
+	private void insertObject(KDTreeObject<T, O> object) {
+
+		if (root == null) {
+			KDTreeNode<T, O> node = new KDTreeNode<>(object, null);
+			root = node;
+			map.put(object.getId(), node);
+			return;
 		}
-		// compare latitude if level is even, else compare longitude
-		if (level % 2 == 0) {
-			if (kdTreeObject.getPoint().getLatitude() < current.getKdTreeObject().getPoint().getLatitude()) {
-				current.left = insert(current.left, kdTreeObject, current, level + 1);
+
+		KDTreeNode<T, O> current = root;
+		KDTreeNode<T, O> parent = root;
+		Point point = object.getPoint();
+		double[] coordinates = { point.getLatitude(), point.getLongitude() };
+		boolean isLatitude = true;
+		boolean isLessThanCurrentValue = true;
+
+		while (current != null) {
+			// Store the current node as the parent for the next iteration
+			parent = current;
+
+			// Determine whether to move to the left or right subtree based on the comparison of the current dimension's coordinate value
+			isLessThanCurrentValue = Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) < 0;
+			current = isLessThanCurrentValue ? current.getLeft() : current.getRight();
+
+			// If the next node in the tree has the same coordinate value along the current dimension, move to the next dimension and repeat the process
+			if (current != null && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
+				isLatitude = !isLatitude;
+				isLessThanCurrentValue = Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) < 0;
+				current = isLessThanCurrentValue ? current.getLeft() : current.getRight();
+
+				// If the next node in the tree has the same coordinate value along the alternate dimension, it already exists in the tree and should be returned
+				if (current != null && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
+					return;
+				}
 			}
-			else {
-				current.right = insert(current.right, kdTreeObject, current, level + 1);
-			}
+
+			// Move to the alternate dimension and continue the iteration
+			isLatitude = !isLatitude;
 		}
-		else {
-			if (kdTreeObject.getPoint().getLongitude() < current.getKdTreeObject().getPoint().getLongitude()) {
-				current.left = insert(current.left, kdTreeObject, current, level + 1);
-			}
-			else {
-				current.right = insert(current.right, kdTreeObject, current, level + 1);
-			}
+
+		KDTreeNode<T, O> node = new KDTreeNode<>(object, parent);
+		map.put(object.getId(), node);
+
+		if (isLessThanCurrentValue) {
+			parent.setLeft(node);
+			return;
 		}
-		return current;
+		parent.setRight(node);
 	}
 
 	/**
@@ -88,7 +128,7 @@ public class KDTree<T, O> {
 		return closestPoints;
 	}
 
-	private void findNearestNeighbor(Node node, Point point, double distance, List<KDTreeObject<T, O>> closestPoints, int depth) {
+	private void findNearestNeighbor(KDTreeNode<T, O> node, Point point, double distance, List<KDTreeObject<T, O>> closestPoints, int depth) {
 		if (node == null) {
 			return;
 		}
@@ -107,37 +147,39 @@ public class KDTree<T, O> {
 		// is less than or equal to the maximum distance
 		if (dim == 0) {
 			if (point.getLatitude() < node.getKdTreeObject().getPoint().getLatitude()) {
-				findNearestNeighbor(node.left, point, distance, closestPoints, depth + 1);
+				findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
 
 				// check if the difference in latitudes is less than or equal to the provided distance
 				// if so, also search the right subtree
-				if (node.right != null && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude()) <= distance) {
-					findNearestNeighbor(node.right, point, distance, closestPoints, depth + 1);
-				}
-			} else {
-				// If the `dim`-th coordinate of the input point is greater than or equal to the `dim`-th coordinate of the current node's point,
-				// continue searching in the right subtree and check if the absolute difference between the `dim`-th coordinates
-				// is less than or equal to the maximum distance
-				findNearestNeighbor(node.right, point, distance, closestPoints, depth + 1);
-
-				// check if the difference in latitudes is less than or equal to the provided distance
-				// if so, also search the left subtree
-				if (node.left != null && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude()) <= distance) {
-					findNearestNeighbor(node.left, point, distance, closestPoints, depth + 1);
-				}
-			}
-		} else {
-			// using the same logic as above but for longitude i.e. the second dimension.
-			if (point.getLongitude() < node.getKdTreeObject().getPoint().getLongitude()) {
-				findNearestNeighbor(node.left, point, distance, closestPoints, depth + 1);
-				if (node.right != null && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude()) <= distance) {
-					findNearestNeighbor(node.right, point, distance, closestPoints, depth + 1);
+				if (node.getRight() != null && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude()) <= distance) {
+					findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
 				}
 			}
 			else {
-				findNearestNeighbor(node.right, point, distance, closestPoints, depth + 1);
-				if (node.left != null && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude()) <= distance) {
-					findNearestNeighbor(node.left, point, distance, closestPoints, depth + 1);
+				// If the `dim`-th coordinate of the input point is greater than or equal to the `dim`-th coordinate of the current node's point,
+				// continue searching in the right subtree and check if the absolute difference between the `dim`-th coordinates
+				// is less than or equal to the maximum distance
+				findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
+
+				// check if the difference in latitudes is less than or equal to the provided distance
+				// if so, also search the left subtree
+				if (node.getLeft() != null && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude()) <= distance) {
+					findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
+				}
+			}
+		}
+		else {
+			// using the same logic as above but for longitude i.e. the second dimension.
+			if (point.getLongitude() < node.getKdTreeObject().getPoint().getLongitude()) {
+				findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
+				if (node.getRight() != null && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude()) <= distance) {
+					findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
+				}
+			}
+			else {
+				findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
+				if (node.getLeft() != null && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude()) <= distance) {
+					findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
 				}
 			}
 		}
@@ -162,7 +204,7 @@ public class KDTree<T, O> {
 	 * */
 	public KDTreeObject<T, O> getById(T id) {
 		return Optional.ofNullable(map.get(id))
-				.map(Node::getKdTreeObject)
+				.map(KDTreeNode::getKdTreeObject)
 				.orElse(null);
 	}
 
@@ -199,37 +241,37 @@ public class KDTree<T, O> {
 		}).orElse(false);
 	}
 
-	private void deleteNode(Node node) {
-		if (node.left == null && node.right == null) {
-			if (node.parent.left == node) {
-				node.parent.left = null;
+	private void deleteNode(KDTreeNode<T, O> node) {
+		if (node.getLeft() == null && node.getRight() == null) {
+			if (node.getParent().getLeft() == node) {
+				node.getParent().setLeft(null);
 			}
 			else {
-				node.parent.right = null;
+				node.getParent().setRight(null);
 			}
 		}
-		else if (node.left == null) {
-			if (node.parent.left == node) {
-				node.parent.left = node.right;
+		else if (node.getLeft() == null) {
+			if (node.getParent().getLeft() == node) {
+				node.getParent().setLeft(node.getRight());
 			}
 			else {
-				node.parent.right = node.right;
+				node.getParent().setRight(node.getRight());
 			}
-			node.right.parent = node.parent;
+			node.getRight().setParent(node.getParent());
 		}
-		else if (node.right == null) {
-			if (node.parent.left == node) {
-				node.parent.left = node.left;
+		else if (node.getRight() == null) {
+			if (node.getParent().getLeft() == node) {
+				node.getParent().setLeft(node.getLeft());
 			}
 			else {
-				node.parent.right = node.left;
+				node.getParent().setRight(node.getLeft());
 			}
-			node.left.parent = node.parent;
+			node.getLeft().setParent(node.getParent());
 		}
 		else {
-			Node minNode = node.right;
-			while (minNode.left != null) {
-				minNode = minNode.left;
+			KDTreeNode<T, O> minNode = node.getRight();
+			while (minNode.getLeft() != null) {
+				minNode = minNode.getLeft();
 			}
 			node.setKdTreeObject(minNode.getKdTreeObject());
 			deleteNode(minNode);
@@ -242,7 +284,7 @@ public class KDTree<T, O> {
 		double lat2 = point2.getLatitude();
 		double lon2 = point2.getLongitude();
 
-		double R = 6378.137; // radius of Earth in kilometers WGS84
+		double R = 6371; // radius of Earth in kilometers
 		double dLat = Math.toRadians(lat2 - lat1);
 		double dLon = Math.toRadians(lon2 - lon1);
 		lat1 = Math.toRadians(lat1);
@@ -253,30 +295,4 @@ public class KDTree<T, O> {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		return R * c;
 	}
-
-	private class Node {
-		private KDTreeObject<T, O> kdTreeObject;
-
-		private Node parent;
-
-		private Node left;
-
-		private Node right;
-
-		Node(KDTreeObject<T, O> kdTreeObject, Node parent) {
-			this.kdTreeObject = kdTreeObject;
-			this.parent = parent;
-			this.left = null;
-			this.right = null;
-		}
-
-		public KDTreeObject<T, O> getKdTreeObject() {
-			return kdTreeObject;
-		}
-
-		public void setKdTreeObject(KDTreeObject<T, O> kdTreeObject) {
-			this.kdTreeObject = kdTreeObject;
-		}
-	}
-
 }
