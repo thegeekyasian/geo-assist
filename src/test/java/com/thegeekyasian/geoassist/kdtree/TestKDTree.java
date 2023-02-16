@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -90,74 +91,73 @@ public class TestKDTree {
 		assertEquals(0, nearestNeighbors.size());
 	}
 
+	@Test
+	public void testBalancing() {
+
+		KDTree<String, Object> kdTree = new KDTree<>();
+		init(kdTree, new String[] {
+				"24.876282,67.022481",
+				"24.867244,67.131593",
+				"24.876997,67.120129",
+				"24.904153,67.012868",
+				"24.933166,67.101917",
+				"24.889639,67.069044",
+				"24.894643,67.085695",
+				"24.950982,67.051792",
+
+				"24.952772,67.054882",
+				"24.969653,67.071791",
+				"24.990187,67.017117",
+				"24.916059,67.171783",
+				"24.829804,67.037544",
+				"24.950607,66.835670",
+				"25.027137,8.393555",
+				"-2.054868,34.189453",
+				"25.050570,67.009735",
+				"25.191657,66.834984",
+				"24.927578,66.989136",
+				"24.952772,67.054882",
+		});
+
+		boolean beforeBalancing = kdTree.isBalanced();
+		kdTree.balance();
+		boolean afterBalancing = kdTree.isBalanced();
+
+		assertFalse(beforeBalancing);
+		assertTrue(afterBalancing);
+	}
+
 	@BeforeEach
 	public void beforeEach() {
 		kdTree = new KDTree<>();
-		init(kdTree);
+		String[] coordinates = new String[] {
+				"25.1967512,55.2732038",
+				"25.1962077,55.2714443",
+				"25.1954312,55.2811432",
+				"25.1903843,55.2798557",
+				"25.2002450,55.2734184",
+				"25.2028848,55.2783966",
+				"25.2012544,55.2569389",
+				"25.1644242,55.2450943",
+				"25.0763827,55.1616669"
+		};
+
+		init(kdTree, coordinates);
 	}
 
-	public static void init(KDTree<String, Object> kdTree) {
+	public static void init(KDTree<String, Object> kdTree, String[] coordinates) {
+		for (int i = 0; i < coordinates.length; i++) {
+			String[] point = coordinates[i].split(",");
 
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("1")
-				.latitude(25.1967512)
-				.longitude(55.2732038)
-				.build());
+			if (point.length < 2) {
+				throw new RuntimeException("Incorrect geo data provided.");
+			}
 
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("2")
-				.latitude(25.1962077)
-				.longitude(55.2714443)
-				.build());
-
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("3")
-				.latitude(25.1954312)
-				.longitude(55.2811432)
-				.build());
-
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("4")
-				.latitude(25.1903843)
-				.longitude(55.2798557)
-				.build());
-
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("5")
-				.latitude(25.2002450)
-				.longitude(55.2734184)
-				.build());
-
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("6")
-				.latitude(25.2028848)
-				.longitude(55.2783966)
-				.build());
-
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("7")
-				.latitude(25.2012544)
-				.longitude(55.2569389)
-				.build());
-
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("8")
-				.latitude(25.1644242)
-				.longitude(55.2450943)
-				.build());
-
-
-		kdTree.insert(new KDTreeObject.Builder<String, Object>()
-				.id("9")
-				.latitude(25.0763827)
-				.longitude(55.1616669)
-				.build());
+			kdTree.insert(new KDTreeObject.Builder<String, Object>()
+					.id(String.valueOf(i + 1))
+					.latitude(Double.parseDouble(point[0].trim()))
+					.longitude(Double.parseDouble(point[1].trim()))
+					.build());
+		}
 	}
 }
