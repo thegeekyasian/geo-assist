@@ -80,3 +80,7 @@ GeoAssist-K-DTree_Balanced.findNearestNeighbor    10000  avgt    5  170.172 ±  
 GeoAssist-K-DTree_Balanced.findNearestNeighbor   100000  avgt    5  169.036 ±  3.656  ns/op
 GeoAssist-K-DTree_Balanced.findNearestNeighbor  1000000  avgt    5  175.640 ± 10.803  ns/op
 ```
+
+### Summary
+
+![image](https://user-images.githubusercontent.com/30790884/219823261-1da8a378-547e-42b3-a6a6-e49f6c7e4189.png)
