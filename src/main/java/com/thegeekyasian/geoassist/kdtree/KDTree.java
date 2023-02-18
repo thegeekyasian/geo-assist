@@ -396,21 +396,25 @@ public class KDTree<T, O> implements Serializable {
 		return node;
 	}
 
-	private double getHaversineDistance(Point point1, Point point2) {
-		double lat1 = point1.getLatitude();
-		double lon1 = point1.getLongitude();
-		double lat2 = point2.getLatitude();
-		double lon2 = point2.getLongitude();
+	private double getHaversineDistance(final Point point1, final Point point2) {
+		final double lat1 = point1.getLatitude();
+		final double lon1 = point1.getLongitude();
+		final double lat2 = point2.getLatitude();
+		final double lon2 = point2.getLongitude();
 
-		double R = 6371; // radius of Earth in kilometers
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLon = Math.toRadians(lon2 - lon1);
-		lat1 = Math.toRadians(lat1);
-		lat2 = Math.toRadians(lat2);
+		final double R = 6378.13; // radius of Earth in kilometer WGS84
+		final double dLat = Math.toRadians(lat2 - lat1);
+		final double dLon = Math.toRadians(lon2 - lon1);
+		
+		final double lat1Radios = Math.toRadians(lat01);
+        	final double lat2Radios = Math.toRadians(lat02);
+		
+		final double latDelta = Math.sin(dLat / 2);
+       		final double lonDelta = Math.sin(dLon / 2);
 
-		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-				Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		final double a = latDelta * latDelta +
+				lonDelta * lonDelta * Math.cos(lat1Radios) * Math.cos(lat2Radios);
+		final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		return R * c;
 	}
 }
