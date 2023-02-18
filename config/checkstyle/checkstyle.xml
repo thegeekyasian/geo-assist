@@ -227,6 +227,7 @@
         <module name="NPathComplexity"/>
 
         <module name="FinalParameters">
+            <property name="ignorePrimitiveTypes" value="true"/>
             <property name="severity"
                       value="${checkstyle.finalparameters.severity}"
                       default="ignore"/>

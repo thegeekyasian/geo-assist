@@ -39,7 +39,7 @@ public class KDTreeNode<T, O> {
         this.right = right;
     }
 
-    public KDTreeNode(final KDTreeObject<T, O> kdTreeObject, final int depth, KDTreeNode<T, O> parent) {
+    public KDTreeNode(final KDTreeObject<T, O> kdTreeObject, final int depth, final KDTreeNode<T, O> parent) {
         this.kdTreeObject = kdTreeObject;
         this.parent = parent;
         this.left = null;
