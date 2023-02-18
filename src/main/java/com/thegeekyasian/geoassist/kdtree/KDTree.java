@@ -4,13 +4,12 @@ import com.thegeekyasian.geoassist.core.GeoAssistException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nullable;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @param <T> describes the identifier of the K-d Tree Object,
@@ -31,14 +30,13 @@ import java.util.Optional;
  */
 public class KDTree<T, O> implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 5020274653621814765L;
 
     @SuppressFBWarnings("SE_BAD_FIELD")
     private KDTreeNode<T, O> root;
 
     @SuppressFBWarnings("SE_BAD_FIELD")
-    private final Map<T, KDTreeNode<T, O>> nodeMap = new HashMap<>();
+    private final Map<T, KDTreeNode<T, O>> nodeMap = new ConcurrentHashMap<>();
 
     /**
      * Creates a new instance of KDTree.
