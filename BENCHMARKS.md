@@ -51,5 +51,5 @@ GeoAssist-K-DTree_Shuffle.insert  1000000  avgt    5  818519030.000 ± 140793765
 ```
 
 ### Summary
+![image](https://user-images.githubusercontent.com/30790884/219821529-f4b02729-c772-497a-be57-1d8a17bf2f45.png)
 
-![image](https://user-images.githubusercontent.com/30790884/219818462-06643c77-07c8-4c27-b08a-02381e461363.png)
