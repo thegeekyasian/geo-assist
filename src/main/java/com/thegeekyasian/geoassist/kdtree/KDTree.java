@@ -4,7 +4,11 @@ import com.thegeekyasian.geoassist.core.GeoAssistException;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @param <T> describes the identifier of the K-d Tree Object,
@@ -29,7 +33,7 @@ public class KDTree<T, O> implements Serializable {
 
     private KDTreeNode<T, O> root;
 
-    private final Map<T, KDTreeNode<T, O>> map = new HashMap<>();
+    private final Map<T, KDTreeNode<T, O>> nodeMap = new HashMap<>();
 
     /**
      * Creates a new instance of KDTree.
@@ -50,13 +54,14 @@ public class KDTree<T, O> implements Serializable {
         insertObject(kdTreeObject);
     }
 
+    @SuppressWarnings({"checkstyle:NPathComplexity", "checkstyle:CyclomaticComplexity"})
     private void insertObject(final KDTreeObject<T, O> object) {
 
         int depth = 0;
         if (root == null) {
             KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, null);
             root = node;
-            map.put(object.getId(), node);
+            nodeMap.put(object.getId(), node);
             return;
         }
 
@@ -71,18 +76,23 @@ public class KDTree<T, O> implements Serializable {
             // Store the current node as the parent for the next iteration
             parent = current;
 
-            // Determine whether to move to the left or right subtree based on the comparison of the current dimension's coordinate value
+            // Determine whether to move to the left or right subtree based on
+            // the comparison of the current dimension's coordinate value
             isLessThanCurrentValue = Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) < 0;
             current = isLessThanCurrentValue ? current.getLeft() : current.getRight();
 
-            // If the next node in the tree has the same coordinate value along the current dimension, move to the next dimension and repeat the process
-            if (current != null && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
+            // If the next node in the tree has the same coordinate value along the current dimension,
+            // move to the next dimension and repeat the process
+            if (current != null
+                    && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
                 isLatitude = !isLatitude;
                 isLessThanCurrentValue = Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) < 0;
                 current = isLessThanCurrentValue ? current.getLeft() : current.getRight();
 
-                // If the next node in the tree has the same coordinate value along the alternate dimension, it already exists in the tree and should be returned
-                if (current != null && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
+                // If the next node in the tree has the same coordinate value along the alternate dimension,
+                // it already exists in the tree and should be returned
+                if (current != null
+                        && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
                     return;
                 }
             }
@@ -93,7 +103,7 @@ public class KDTree<T, O> implements Serializable {
         }
 
         final KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, parent);
-        map.put(object.getId(), node);
+        nodeMap.put(object.getId(), node);
 
         if (isLessThanCurrentValue) {
             parent.setLeft(node);
@@ -121,6 +131,7 @@ public class KDTree<T, O> implements Serializable {
         return closestPoints;
     }
 
+    @SuppressWarnings("checkstyle:CyclomaticComplexity")
     private void findNearestNeighbor(final KDTreeNode<T, O> node,
                                      final Point point,
                                      final double distance,
@@ -139,7 +150,8 @@ public class KDTree<T, O> implements Serializable {
         // Determine which dimension to compare based on the depth of the current node in the K-d tree
         final int dim = depth % 2;
 
-        // If the `dim`-th coordinate of the input point is less than the `dim`-th coordinate of the current node's point,
+        // If the `dim`-th coordinate of the input point is less than the `dim`-th coordinate
+        // of the current node's point,
         // continue searching in the left subtree and check if the absolute difference between the `dim`-th coordinates
         // is less than or equal to the maximum distance
         if (dim == 0) {
@@ -148,18 +160,24 @@ public class KDTree<T, O> implements Serializable {
 
                 // check if the difference in latitudes is less than or equal to the provided distance
                 // if so, also search the right subtree
-                if (node.getRight() != null && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude()) <= distance) {
+                if (node.getRight() != null
+                        && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude())
+                        <= distance) {
                     findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
                 }
             } else {
-                // If the `dim`-th coordinate of the input point is greater than or equal to the `dim`-th coordinate of the current node's point,
-                // continue searching in the right subtree and check if the absolute difference between the `dim`-th coordinates
+                // If the `dim`-th coordinate of the input point is greater than or equal to the `dim`-th
+                // coordinate of the current node's point,
+                // continue searching in the right subtree and check if the absolute difference between
+                // the `dim`-th coordinates
                 // is less than or equal to the maximum distance
                 findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
 
                 // check if the difference in latitudes is less than or equal to the provided distance
                 // if so, also search the left subtree
-                if (node.getLeft() != null && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude()) <= distance) {
+                if (node.getLeft() != null
+                        && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude())
+                        <= distance) {
                     findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
                 }
             }
@@ -167,12 +185,16 @@ public class KDTree<T, O> implements Serializable {
             // using the same logic as above but for longitude i.e. the second dimension.
             if (point.getLongitude() < node.getKdTreeObject().getPoint().getLongitude()) {
                 findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
-                if (node.getRight() != null && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude()) <= distance) {
+                if (node.getRight() != null
+                        && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude())
+                        <= distance) {
                     findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
                 }
             } else {
                 findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
-                if (node.getLeft() != null && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude()) <= distance) {
+                if (node.getLeft() != null
+                        && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude())
+                        <= distance) {
                     findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
                 }
             }
@@ -185,7 +207,7 @@ public class KDTree<T, O> implements Serializable {
      * @return an integer value of size is returned.
      */
     public int getSize() {
-        return map.size();
+        return nodeMap.size();
     }
 
     /**
@@ -197,7 +219,7 @@ public class KDTree<T, O> implements Serializable {
      */
     @Nullable
     public KDTreeObject<T, O> getById(final T id) {
-        return Optional.ofNullable(map.get(id))
+        return Optional.ofNullable(nodeMap.get(id))
                 .map(KDTreeNode::getKdTreeObject)
                 .orElse(null);
     }
@@ -210,7 +232,7 @@ public class KDTree<T, O> implements Serializable {
      * @throws GeoAssistException is thrown an object with provided ID is not found.
      */
     public void update(final T id, final O data) {
-        Optional.ofNullable(map.get(id))
+        Optional.ofNullable(nodeMap.get(id))
                 .map(node -> {
                     node.getKdTreeObject().setData(data);
                     return node.getKdTreeObject();
@@ -225,9 +247,9 @@ public class KDTree<T, O> implements Serializable {
      * and `false` otherwise.
      */
     public boolean delete(final T id) {
-        return Optional.ofNullable(map.get(id)).map(node -> {
+        return Optional.ofNullable(nodeMap.get(id)).map(node -> {
             deleteNode(node);
-            map.remove(id);
+            nodeMap.remove(id);
             return true;
         }).orElse(false);
     }
@@ -292,7 +314,8 @@ public class KDTree<T, O> implements Serializable {
         // Recursively call isBalanced on the left subtree, obtaining its depth.
         int leftDepth = isBalanced(node.getLeft());
 
-        // If the left subtree is unbalanced (depth of -1), return -1 to indicate that the current subtree is also unbalanced.
+        // If the left subtree is unbalanced (depth of -1),
+        // return -1 to indicate that the current subtree is also unbalanced.
         if (leftDepth == -1) {
             return -1;
         }
@@ -300,14 +323,16 @@ public class KDTree<T, O> implements Serializable {
         // Recursively call isBalanced on the right subtree, obtaining its depth.
         int rightDepth = isBalanced(node.getRight());
 
-        // If the right subtree is unbalanced (depth of -1), return -1 to indicate that the current subtree is also unbalanced.
+        // If the right subtree is unbalanced (depth of -1),
+        // return -1 to indicate that the current subtree is also unbalanced.
         if (rightDepth == -1) {
             return -1;
         }
 
         // Check if the current subtree is balanced by comparing the depths of the left and right subtrees.
         if (Math.abs(leftDepth - rightDepth) > 1) {
-            // If the current subtree is unbalanced, return -1 to indicate that the current subtree is unbalanced.
+            // If the current subtree is unbalanced,
+            // return -1 to indicate that the current subtree is unbalanced.
             return -1;
         }
 
@@ -352,10 +377,10 @@ public class KDTree<T, O> implements Serializable {
     }
 
     private void collectNodes(final List<KDTreeNode<T, O>> nodeList) {
-        if (map.isEmpty()) {
+        if (nodeMap.isEmpty()) {
             return;
         }
-        nodeList.addAll(map.values());
+        nodeList.addAll(nodeMap.values());
     }
 
     @Nullable
@@ -397,9 +422,9 @@ public class KDTree<T, O> implements Serializable {
         final double latDelta = Math.sin(dLat / 2);
         final double lonDelta = Math.sin(dLon / 2);
 
-        final double a = latDelta * latDelta +
-                lonDelta * lonDelta * Math.cos(lat1Radios) * Math.cos(lat2Radios);
+        final double a = (latDelta * latDelta) + (lonDelta * lonDelta * Math.cos(lat1Radios) * Math.cos(lat2Radios));
         final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
         return R * c;
     }
 }
