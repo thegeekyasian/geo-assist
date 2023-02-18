@@ -53,3 +53,30 @@ GeoAssist-K-DTree_Shuffle.insert  1000000  avgt    5  818519030.000 ± 140793765
 ### Summary
 ![image](https://user-images.githubusercontent.com/30790884/219821529-f4b02729-c772-497a-be57-1d8a17bf2f45.png)
 
+## Find Nearest Neighbor
+
+### Geo Assist (Unbalanced Tree - Unordered Insertion)
+
+```
+Benchmark                                          (size)  Mode  Cnt         Score          Error  Units
+GeoAssist-K-DTree_Unbalanced.findNearestNeighbor        1  avgt    5       172.428 ±       10.924  ns/op
+GeoAssist-K-DTree_Unbalanced.findNearestNeighbor       10  avgt    5       917.868 ±      140.696  ns/op
+GeoAssist-K-DTree_Unbalanced.findNearestNeighbor      100  avgt    5      4429.680 ±      523.224  ns/op
+GeoAssist-K-DTree_Unbalanced.findNearestNeighbor     1000  avgt    5     26142.709 ±     3375.036  ns/op
+GeoAssist-K-DTree_Unbalanced.findNearestNeighbor    10000  avgt    5    204298.346 ±    23939.167  ns/op
+GeoAssist-K-DTree_Unbalanced.findNearestNeighbor   100000  avgt    5   2447769.418 ±   122831.088  ns/op
+GeoAssist-K-DTree_Unbalanced.findNearestNeighbor  1000000  avgt    5  28057768.147 ± 21224821.849  ns/op
+```
+
+### Geo Assist (Balanced Tree)
+
+```
+Benchmark                                        (size)  Mode  Cnt    Score    Error  Units
+GeoAssist-K-DTree_Balanced.findNearestNeighbor        1  avgt    5  170.756 ± 11.267  ns/op
+GeoAssist-K-DTree_Balanced.findNearestNeighbor       10  avgt    5  169.294 ±  1.702  ns/op
+GeoAssist-K-DTree_Balanced.findNearestNeighbor      100  avgt    5  173.019 ±  6.780  ns/op
+GeoAssist-K-DTree_Balanced.findNearestNeighbor     1000  avgt    5  170.490 ±  6.104  ns/op
+GeoAssist-K-DTree_Balanced.findNearestNeighbor    10000  avgt    5  170.172 ±  5.985  ns/op
+GeoAssist-K-DTree_Balanced.findNearestNeighbor   100000  avgt    5  169.036 ±  3.656  ns/op
+GeoAssist-K-DTree_Balanced.findNearestNeighbor  1000000  avgt    5  175.640 ± 10.803  ns/op
+```
