@@ -5,68 +5,68 @@ package com.thegeekyasian.geoassist.kdtree;
  */
 public class KDTreeNode<T, O> {
 
-	private KDTreeObject<T, O> kdTreeObject;
+    private KDTreeObject<T, O> kdTreeObject;
 
-	private KDTreeNode<T, O> parent;
+    private KDTreeNode<T, O> parent;
 
-	private KDTreeNode<T, O> left;
+    private KDTreeNode<T, O> left;
 
-	private KDTreeNode<T, O> right;
+    private KDTreeNode<T, O> right;
 
-	private int depth;
+    private int depth;
 
-	public KDTreeNode<T, O> getParent() {
-		return parent;
-	}
+    public KDTreeNode<T, O> getParent() {
+        return parent;
+    }
 
-	public void setParent(KDTreeNode<T, O> parent) {
-		this.parent = parent;
-	}
+    public void setParent(final KDTreeNode<T, O> parent) {
+        this.parent = parent;
+    }
 
-	public KDTreeNode<T, O> getLeft() {
-		return left;
-	}
+    public KDTreeNode<T, O> getLeft() {
+        return left;
+    }
 
-	public void setLeft(KDTreeNode<T, O> left) {
-		this.left = left;
-	}
+    public void setLeft(final KDTreeNode<T, O> left) {
+        this.left = left;
+    }
 
-	public KDTreeNode<T, O> getRight() {
-		return right;
-	}
+    public KDTreeNode<T, O> getRight() {
+        return right;
+    }
 
-	public void setRight(KDTreeNode<T, O> right) {
-		this.right = right;
-	}
+    public void setRight(final KDTreeNode<T, O> right) {
+        this.right = right;
+    }
 
-	public KDTreeNode(KDTreeObject<T, O> kdTreeObject, int depth, KDTreeNode<T, O> parent) {
-		this.kdTreeObject = kdTreeObject;
-		this.parent = parent;
-		this.left = null;
-		this.right = null;
-		this.depth = depth;
-	}
+    public KDTreeNode(final KDTreeObject<T, O> kdTreeObject, final int depth, KDTreeNode<T, O> parent) {
+        this.kdTreeObject = kdTreeObject;
+        this.parent = parent;
+        this.left = null;
+        this.right = null;
+        this.depth = depth;
+    }
 
-	public double value(boolean isLatitude) {
-		if (isLatitude) {
-			return getKdTreeObject().getPoint().getLatitude();
-		}
-		return getKdTreeObject().getPoint().getLongitude();
-	}
+    public double value(final boolean isLatitude) {
+        if (isLatitude) {
+            return getKdTreeObject().getPoint().getLatitude();
+        }
+        return getKdTreeObject().getPoint().getLongitude();
+    }
 
-	public KDTreeObject<T, O> getKdTreeObject() {
-		return kdTreeObject;
-	}
+    public KDTreeObject<T, O> getKdTreeObject() {
+        return kdTreeObject;
+    }
 
-	public void setKdTreeObject(KDTreeObject<T, O> kdTreeObject) {
-		this.kdTreeObject = kdTreeObject;
-	}
+    public void setKdTreeObject(final KDTreeObject<T, O> kdTreeObject) {
+        this.kdTreeObject = kdTreeObject;
+    }
 
-	public int getDepth() {
-		return depth;
-	}
+    public int getDepth() {
+        return depth;
+    }
 
-	public void setDepth(int depth) {
-		this.depth = depth;
-	}
+    public void setDepth(final int depth) {
+        this.depth = depth;
+    }
 }
