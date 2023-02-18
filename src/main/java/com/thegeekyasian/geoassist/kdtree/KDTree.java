@@ -2,10 +2,10 @@ package com.thegeekyasian.geoassist.kdtree;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.thegeekyasian.geoassist.core.GeoAssistException;
 
@@ -36,7 +36,7 @@ public class KDTree<T, O> implements Serializable {
 
 	private KDTreeNode<T, O> root;
 
-	private final Map<T, KDTreeNode<T, O>> map = new HashMap<>();
+	private final Map<T, KDTreeNode<T, O>> map = new ConcurrentHashMap<>();
 
 	/**
 	 * Creates a new instance of KDTree.
