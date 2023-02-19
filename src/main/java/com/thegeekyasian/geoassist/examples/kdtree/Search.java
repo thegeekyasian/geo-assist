@@ -15,16 +15,19 @@ public class Search {
 
         final KDTree<Long, Object> kdTree = new KDTree<>();
         init(kdTree);
-        final List<KDTreeObject<Long, Object>> nearestNeighbors = kdTree.findNearestNeighbor(
-                new Point.Builder()
-                        .latitude(25.2012544)
-                        .longitude(55.2569389)
-                        .build(), 2); // 2 kilometers based on haversine distance.
 
-        nearestNeighbors.forEach(neighbor -> System.out.printf("ID -> %s%n", neighbor.getId()));
+        final Point point = new Point.Builder()
+                .latitude(25.2012544)
+                .longitude(55.2569389)
+                .build();
+        final List<KDTreeObject<Long, Object>> nearestNeighbors =
+                kdTree.findNearestNeighbor(point, 2); // 2 kilometers based on haversine distance.
+
+        //output
+        nearestNeighbors.forEach(System.out::println);
     }
 
-    public static void init(final KDTree<Long, Object> kdTree) {
+    private static void init(final KDTree<Long, Object> kdTree) {
 
         kdTree.insert(new KDTreeObject.Builder<Long, Object>()
                 .id(1L)

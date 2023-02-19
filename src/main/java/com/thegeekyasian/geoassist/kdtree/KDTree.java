@@ -3,6 +3,7 @@ package com.thegeekyasian.geoassist.kdtree;
 import com.thegeekyasian.geoassist.core.GeoAssistException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * @param <T> describes the identifier of the K-d Tree Object,
@@ -53,16 +57,16 @@ public class KDTree<T, O> implements Serializable {
      * @param kdTreeObject KDTreeObject holds the custom object,
      *                     identifier along with the Point (latitude/longitude coordinates) of the object.
      */
-    public void insert(final KDTreeObject<T, O> kdTreeObject) {
+    public void insert(@Nonnull final KDTreeObject<T, O> kdTreeObject) {
         insertObject(kdTreeObject);
     }
 
     @SuppressWarnings({"checkstyle:NPathComplexity", "checkstyle:CyclomaticComplexity"})
-    private void insertObject(final KDTreeObject<T, O> object) {
+    private void insertObject(@Nonnull final KDTreeObject<T, O> object) {
 
         int depth = 0;
-        if (root == null) {
-            KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, null);
+        if (isNull(root)) {
+            KDTreeNode<T, O> node = new KDTreeNode<>(object, null, depth);
             root = node;
             nodeMap.put(object.getId(), node);
             return;
@@ -105,7 +109,7 @@ public class KDTree<T, O> implements Serializable {
             depth++;
         }
 
-        final KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, parent);
+        final KDTreeNode<T, O> node = new KDTreeNode<>(object, parent, depth);
         nodeMap.put(object.getId(), node);
 
         if (isLessThanCurrentValue) {
@@ -125,7 +129,7 @@ public class KDTree<T, O> implements Serializable {
      * @return Returns the list of KDTreeObjects
      * that are nearby the provided point for the provided distance.
      */
-    public List<KDTreeObject<T, O>> findNearestNeighbor(final Point point, final double distance) {
+    public List<KDTreeObject<T, O>> findNearestNeighbor(@Nonnull final Point point, final double distance) {
         // Initialize a list to store the closest points
         List<KDTreeObject<T, O>> closestPoints = new ArrayList<>();
         // Call the recursive helper method with the root node, point, distance, and closestPoints list
@@ -135,12 +139,12 @@ public class KDTree<T, O> implements Serializable {
     }
 
     @SuppressWarnings("checkstyle:CyclomaticComplexity")
-    private void findNearestNeighbor(final KDTreeNode<T, O> node,
-                                     final Point point,
+    private void findNearestNeighbor(@Nullable final KDTreeNode<T, O> node,
+                                     @Nonnull final Point point,
                                      final double distance,
-                                     final List<KDTreeObject<T, O>> closestPoints,
+                                     @Nonnull final List<KDTreeObject<T, O>> closestPoints,
                                      final int depth) {
-        if (node == null) {
+        if (isNull(node)) {
             return;
         }
 
@@ -163,7 +167,7 @@ public class KDTree<T, O> implements Serializable {
 
                 // check if the difference in latitudes is less than or equal to the provided distance
                 // if so, also search the right subtree
-                if (node.getRight() != null
+                if (nonNull(node.getRight())
                         && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude())
                         <= distance) {
                     findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
@@ -178,7 +182,7 @@ public class KDTree<T, O> implements Serializable {
 
                 // check if the difference in latitudes is less than or equal to the provided distance
                 // if so, also search the left subtree
-                if (node.getLeft() != null
+                if (nonNull(node.getLeft())
                         && Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude())
                         <= distance) {
                     findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
@@ -188,14 +192,14 @@ public class KDTree<T, O> implements Serializable {
             // using the same logic as above but for longitude i.e. the second dimension.
             if (point.getLongitude() < node.getKdTreeObject().getPoint().getLongitude()) {
                 findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
-                if (node.getRight() != null
+                if (nonNull(node.getRight())
                         && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude())
                         <= distance) {
                     findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
                 }
             } else {
                 findNearestNeighbor(node.getRight(), point, distance, closestPoints, depth + 1);
-                if (node.getLeft() != null
+                if (nonNull(node.getLeft())
                         && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude())
                         <= distance) {
                     findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
@@ -221,7 +225,7 @@ public class KDTree<T, O> implements Serializable {
      * If not found, the method returns `null` otherwise.
      */
     @Nullable
-    public KDTreeObject<T, O> getById(final T id) {
+    public KDTreeObject<T, O> getById(@Nonnull final T id) {
         return Optional.ofNullable(nodeMap.get(id))
                 .map(KDTreeNode::getKdTreeObject)
                 .orElse(null);
@@ -234,12 +238,12 @@ public class KDTree<T, O> implements Serializable {
      * @param data Custom data to be updated in the KDTreeObject of provided ID.
      * @throws GeoAssistException is thrown an object with provided ID is not found.
      */
-    public void update(final T id, final O data) {
-        Optional.ofNullable(nodeMap.get(id))
-                .map(node -> {
-                    node.getKdTreeObject().setData(data);
-                    return node.getKdTreeObject();
-                }).orElseThrow(() -> new GeoAssistException("No object found for provided ID"));
+    public void update(@Nonnull final T id, @Nonnull final O data) {
+        KDTreeObject<T, O> tokdTreeObject = Optional.ofNullable(nodeMap.get(id))
+                .map(KDTreeNode::getKdTreeObject)
+                .orElseThrow(() -> new GeoAssistException("No object found for provided ID"));
+
+        tokdTreeObject.setData(data);
     }
 
     /**
@@ -249,7 +253,7 @@ public class KDTree<T, O> implements Serializable {
      * @return Returns a boolean flag, `true` if the object is successfully deleted
      * and `false` otherwise.
      */
-    public boolean delete(final T id) {
+    public boolean delete(@Nonnull final T id) {
         return Optional.ofNullable(nodeMap.get(id)).map(node -> {
             deleteNode(node);
             nodeMap.remove(id);
@@ -257,22 +261,22 @@ public class KDTree<T, O> implements Serializable {
         }).orElse(false);
     }
 
-    private void deleteNode(final KDTreeNode<T, O> node) {
-        if (node.getLeft() == null && node.getRight() == null) {
-            if (node.getParent().getLeft() == node) {
+    private void deleteNode(@Nonnull final KDTreeNode<T, O> node) {
+        if (isNull(node.getLeft()) && isNull(node.getRight())) {
+            if (nonNull(node.getParent()) && node.getParent().getLeft() == node) {
                 node.getParent().setLeft(null);
             } else {
                 node.getParent().setRight(null);
             }
-        } else if (node.getLeft() == null) {
-            if (node.getParent().getLeft() == node) {
+        } else if (isNull(node.getLeft()) && nonNull(node.getRight())) {
+            if (nonNull(node.getParent()) && node.getParent().getLeft() == node) {
                 node.getParent().setLeft(node.getRight());
             } else {
                 node.getParent().setRight(node.getRight());
             }
             node.getRight().setParent(node.getParent());
-        } else if (node.getRight() == null) {
-            if (node.getParent().getLeft() == node) {
+        } else if (isNull(node.getRight()) && nonNull(node.getLeft())) {
+            if (nonNull(node.getParent()) && node.getParent().getLeft() == node) {
                 node.getParent().setLeft(node.getLeft());
             } else {
                 node.getParent().setRight(node.getLeft());
@@ -280,7 +284,7 @@ public class KDTree<T, O> implements Serializable {
             node.getLeft().setParent(node.getParent());
         } else {
             KDTreeNode<T, O> minNode = node.getRight();
-            while (minNode.getLeft() != null) {
+            while (nonNull(minNode.getLeft())) {
                 minNode = minNode.getLeft();
             }
             node.setKdTreeObject(minNode.getKdTreeObject());
@@ -308,9 +312,9 @@ public class KDTree<T, O> implements Serializable {
         return isBalanced(root) != -1;
     }
 
-    private int isBalanced(final KDTreeNode<T, O> node) {
+    private int isBalanced(@Nullable final KDTreeNode<T, O> node) {
         // If the current node is null, return 0.
-        if (node == null) {
+        if (isNull(node)) {
             return 0;
         }
 
@@ -364,7 +368,7 @@ public class KDTree<T, O> implements Serializable {
      */
     public void balance() {
         // If the tree is empty, there's nothing to balance
-        if (root == null) {
+        if (isNull(root)) {
             return;
         }
 
@@ -379,7 +383,7 @@ public class KDTree<T, O> implements Serializable {
         root = buildTree(nodeList, null, 0, nodeList.size() - 1, 0);
     }
 
-    private void collectNodes(final List<KDTreeNode<T, O>> nodeList) {
+    private void collectNodes(@Nonnull final List<KDTreeNode<T, O>> nodeList) {
         if (nodeMap.isEmpty()) {
             return;
         }
@@ -387,8 +391,8 @@ public class KDTree<T, O> implements Serializable {
     }
 
     @Nullable
-    private KDTreeNode<T, O> buildTree(final List<KDTreeNode<T, O>> nodeList,
-                                       final KDTreeNode<T, O> parent,
+    private KDTreeNode<T, O> buildTree(@Nonnull final List<KDTreeNode<T, O>> nodeList,
+                                       @Nullable final KDTreeNode<T, O> parent,
                                        final int start,
                                        final int end,
                                        final int depth) {
@@ -409,7 +413,7 @@ public class KDTree<T, O> implements Serializable {
         return node;
     }
 
-    private double getHaversineDistance(final Point point1, final Point point2) {
+    private double getHaversineDistance(@Nonnull final Point point1, @Nonnull final Point point2) {
         final double lat1 = point1.getLatitude();
         final double lon1 = point1.getLongitude();
         final double lat2 = point2.getLatitude();
