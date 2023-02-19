@@ -79,7 +79,7 @@ public class KDTree<T, O> implements Serializable {
         boolean isLatitude = true;
         boolean isLessThanCurrentValue = true;
 
-        while (current != null) {
+        while (nonNull(current)) {
             // Store the current node as the parent for the next iteration
             parent = current;
 
@@ -90,7 +90,7 @@ public class KDTree<T, O> implements Serializable {
 
             // If the next node in the tree has the same coordinate value along the current dimension,
             // move to the next dimension and repeat the process
-            if (current != null
+            if (nonNull(current)
                     && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
                 isLatitude = !isLatitude;
                 isLessThanCurrentValue = Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) < 0;
@@ -98,7 +98,7 @@ public class KDTree<T, O> implements Serializable {
 
                 // If the next node in the tree has the same coordinate value along the alternate dimension,
                 // it already exists in the tree and should be returned
-                if (current != null
+                if (nonNull(current)
                         && Double.compare(coordinates[isLatitude ? 0 : 1], current.value(isLatitude)) == 0) {
                     return;
                 }
