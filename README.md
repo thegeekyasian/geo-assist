@@ -1,5 +1,11 @@
 # Geo Assist
 
+[![Discord](https://img.shields.io/badge/discord-geoassist-purple)](https://discord.gg/8Xe2Ds4BWj)
+[![Twitter](https://img.shields.io/badge/twitter-thegeekyasian-9cf)](https://www.twitter.com/thegeekyasian)
+
+---
+
+
 ## What is it?
 Geo assist is library that allows users to perform insertion and query operations on the spatial data. 
 
