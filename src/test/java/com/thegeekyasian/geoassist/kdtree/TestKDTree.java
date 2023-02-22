@@ -247,6 +247,29 @@ public class TestKDTree {
 		}
 	}
 
+	@Test
+	public void testSizeWhenIdIsNotProvided() {
+		KDTree<String, Object> kdTree = new KDTree<>();
+
+		kdTree.insert(new KDTreeObject.Builder<String, Object>()
+				.id("1")
+				.latitude(25.1967512)
+				.longitude(55.2732038)
+				.build());
+
+		kdTree.insert(new KDTreeObject.Builder<String, Object>()
+				.latitude(25.1962077)
+				.longitude(55.2714443)
+				.build());
+
+		kdTree.insert(new KDTreeObject.Builder<String, Object>()
+				.latitude(25.1954312)
+				.longitude(55.2811432)
+				.build());
+
+		assertEquals(3, kdTree.getSize());
+	}
+
 	@BeforeEach
 	public void beforeEach() {
 		kdTree = new KDTree<>();
