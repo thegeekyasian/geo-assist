@@ -1,8 +1,10 @@
 # Geo Assist Benchmarks
 
-## Insertion
+<details>
+<summary>Insertion</summary>
 
 ### JTS Insert
+
 ```
 Benchmark            (size)  Mode  Cnt           Score           Error  Units
 JTS-K-DTree.insert        1  avgt    5          18.019 ±        12.871  ns/op
@@ -15,6 +17,7 @@ JTS-K-DTree.insert  1000000  avgt    5  1140432240.000 ± 265797631.855  ns/op
 ```
 
 ### Geo Assist
+
 ```
 Benchmark                  (size)  Mode  Cnt          Score           Error  Units
 GeoAssist-K-DTree.insert        1  avgt    5         33.646 ±         0.522  ns/op
@@ -27,6 +30,7 @@ GeoAssist-K-DTree.insert  1000000  avgt    5  867845480.000 ± 250250975.846  ns
 ```
 
 ### JTS Shuffle
+
 ```
 Benchmark                    (size)  Mode  Cnt           Score           Error  Units
 JTS-K-DTree_Shuffle.insert        1  avgt    5          19.530 ±        16.995  ns/op
@@ -39,6 +43,7 @@ JTS-K-DTree_Shuffle.insert  1000000  avgt    5  1160544820.000 ± 273094738.479 
 ```
 
 ### Geo Assist Shuffle
+
 ```
 Benchmark                          (size)  Mode  Cnt          Score           Error  Units
 GeoAssist-K-DTree_Shuffle.insert        1  avgt    5         39.305 ±         8.926  ns/op
@@ -51,9 +56,13 @@ GeoAssist-K-DTree_Shuffle.insert  1000000  avgt    5  818519030.000 ± 140793765
 ```
 
 ### Summary
+
 ![image](https://user-images.githubusercontent.com/30790884/219821529-f4b02729-c772-497a-be57-1d8a17bf2f45.png)
 
-## Find Nearest Neighbor
+</details>
+
+<details>
+<summary>Find Nearest Neighbor</summary>
 
 ### Geo Assist (Unbalanced Tree - Unordered Insertion)
 
@@ -84,3 +93,4 @@ GeoAssist-K-DTree_Balanced.findNearestNeighbor  1000000  avgt    5  175.640 ± 1
 ### Summary
 
 ![image](https://user-images.githubusercontent.com/30790884/219823261-1da8a378-547e-42b3-a6a6-e49f6c7e4189.png)
+</details>
