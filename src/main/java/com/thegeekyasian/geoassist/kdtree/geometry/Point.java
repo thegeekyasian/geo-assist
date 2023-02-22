@@ -1,4 +1,6 @@
-package com.thegeekyasian.geoassist.kdtree;
+package com.thegeekyasian.geoassist.kdtree.geometry;
+
+import com.thegeekyasian.geoassist.core.GeoAssistException;
 
 /**
  * @author thegeekyasian
@@ -7,9 +9,6 @@ public class Point {
 	private double latitude;
 
 	private double longitude;
-
-	public Point() {
-	}
 
 	public Point(Builder builder) {
 		this.latitude = builder.latitude;
@@ -48,6 +47,13 @@ public class Point {
 		}
 
 		public Point build() {
+			if (this.latitude < -90 || this.latitude > 90) {
+				throw new GeoAssistException("not a valid latitude value");
+			}
+			if (this.longitude < -180 || this.longitude > 180) {
+				throw new GeoAssistException("not a valid longitude value");
+			}
+
 			return new Point(this);
 		}
 	}

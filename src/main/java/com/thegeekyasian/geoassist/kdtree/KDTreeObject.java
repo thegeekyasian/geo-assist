@@ -1,5 +1,7 @@
 package com.thegeekyasian.geoassist.kdtree;
 
+import com.thegeekyasian.geoassist.kdtree.geometry.Point;
+
 /**
  * @author thegeekyasian
  *
