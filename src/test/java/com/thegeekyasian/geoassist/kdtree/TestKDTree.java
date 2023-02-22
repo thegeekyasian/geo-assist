@@ -1,9 +1,12 @@
 package com.thegeekyasian.geoassist.kdtree;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.thegeekyasian.geoassist.core.GeoAssistException;
-import com.thegeekyasian.geoassist.kdtree.Point.Builder;
+import com.thegeekyasian.geoassist.kdtree.geometry.BoundingBox;
+import com.thegeekyasian.geoassist.kdtree.geometry.Point;
+import com.thegeekyasian.geoassist.kdtree.geometry.Point.Builder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -125,6 +128,123 @@ public class TestKDTree {
 
 		assertFalse(beforeBalancing);
 		assertTrue(afterBalancing);
+	}
+
+	@Test
+	public void testBoundingBoxSearch_returnsAllObjectsWithinBounds() {
+
+		KDTree<String, Object> kdTree = new KDTree<>();
+		init(kdTree, new String[] {
+				"24.876282,67.022481", // <--
+				"24.867244,67.131593", // <--
+				"24.876997,67.120129", // <--
+				"24.904153,67.012868", // <--
+				"24.933166,67.101917", // <--
+				"24.889639,67.069044", // <--
+				"24.894643,67.085695", // <--
+				"24.950982,67.051792", // <--
+
+				"24.952772,67.054882",
+				"24.969653,67.071791",
+				"24.990187,67.017117",
+				"24.916059,67.171783",
+				"24.829804,67.037544",
+				"24.950607,66.835670",
+				"25.027137,8.393555",
+				"-2.054868,34.189453",
+				"25.050570,67.009735",
+				"25.191657,66.834984",
+				"24.927578,66.989136", // <--
+				"24.952772,67.054882",
+				"24.941142,66.976218", // <--
+				"24.954251,66.972613",
+				"24.953162,66.995788",
+				"24.951256,67.031279", // <--
+		});
+
+		BoundingBox boundingBox = new BoundingBox.Builder()
+				.lowerPoint(new Point.Builder()
+						.latitude(24.836135)
+						.longitude(66.976089)
+						.build())
+				.upperPoint(new Point.Builder()
+						.latitude(24.951953)
+						.longitude(67.157364)
+						.build())
+				.build();
+
+
+		List<KDTreeObject<String, Object>> objects = kdTree.findInRange(boundingBox);
+
+		assertBoundingBoxSearch(
+				Arrays.asList("1", "2", "3", "4", "6", "7", "5", "8", "19", "21", "24"),
+				objects);
+	}
+
+
+	@Test
+	public void testBoundingBoxSearchWithBalancedTree_returnsAllObjectsWithinBounds() {
+
+		KDTree<String, Object> kdTree = new KDTree<>();
+		init(kdTree, new String[] {
+				"24.876282,67.022481", // <--
+				"24.867244,67.131593", // <--
+				"24.876997,67.120129", // <--
+				"24.904153,67.012868", // <--
+				"24.933166,67.101917", // <--
+				"24.889639,67.069044", // <--
+				"24.894643,67.085695", // <--
+				"24.950982,67.051792", // <--
+
+				"24.952772,67.054882",
+				"24.969653,67.071791",
+				"24.990187,67.017117",
+				"24.916059,67.171783",
+				"24.829804,67.037544",
+				"24.950607,66.835670",
+				"25.027137,8.393555",
+				"-2.054868,34.189453",
+				"25.050570,67.009735",
+				"25.191657,66.834984",
+				"24.927578,66.989136", // <--
+				"24.952772,67.054882",
+				"24.941142,66.976218", // <--
+				"24.954251,66.972613",
+				"24.953162,66.995788",
+				"24.951256,67.031279", // <--
+		});
+
+		BoundingBox boundingBox = new BoundingBox.Builder()
+				.lowerPoint(new Point.Builder()
+						.latitude(24.836135)
+						.longitude(66.976089)
+						.build())
+				.upperPoint(new Point.Builder()
+						.latitude(24.951953)
+						.longitude(67.157364)
+						.build())
+				.build();
+
+		kdTree.balance();
+
+
+		List<KDTreeObject<String, Object>> objects = kdTree.findInRange(boundingBox);
+
+		assertBoundingBoxSearch(
+				Arrays.asList("6", "4", "1", "19", "21", "7", "2", "3", "5", "8", "24"),
+				objects);
+	}
+
+	private void assertBoundingBoxSearch(List<String> expectedIDs,
+			List<KDTreeObject<String, Object>> objects) {
+
+		assertNotNull(objects);
+		assertFalse(objects.isEmpty());
+		assertEquals(expectedIDs.size(), objects.size());
+
+		for (int i = 0; i < objects.size(); i++) {
+			assertEquals(expectedIDs.get(i), objects.get(i).getId());
+		}
 	}
 
 	@BeforeEach

@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.thegeekyasian.geoassist.core.GeoAssistException;
+import com.thegeekyasian.geoassist.kdtree.geometry.BoundingBox;
+import com.thegeekyasian.geoassist.kdtree.geometry.Point;
 
 /**
  * @author thegeekyasian
@@ -182,6 +184,61 @@ public class KDTree<T, O> implements Serializable {
 				if (node.getLeft() != null && Math.abs(node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude()) <= distance) {
 					findNearestNeighbor(node.getLeft(), point, distance, closestPoints, depth + 1);
 				}
+			}
+		}
+	}
+
+	/**
+	 * <p>
+	 *     Searches the k-d tree for all nodes whose
+	 *     coordinates fall within the given bounding box.
+	 * </p>
+	 *
+	 * @param boundingBox the bounding box that defines the range to search within
+	 * @return a list of KDTreeObject whose coordinates fall within the bounding box
+	 */
+	public List<KDTreeObject<T, O>> findInRange(BoundingBox boundingBox) {
+		List<KDTreeObject<T, O>> result = new ArrayList<>();
+		search(root, boundingBox, true, result);
+		return result;
+	}
+
+	private void search(KDTreeNode<T, O> node, BoundingBox boundingBox, boolean isLatitude,
+			List<KDTreeObject<T, O>> result) {
+		if (node == null) {
+			return;
+		}
+		KDTreeObject<T, O> kdTreeObject = node.getKdTreeObject();
+		double latitude = kdTreeObject.getPoint().getLatitude();
+		double longitude = kdTreeObject.getPoint().getLongitude();
+		Point lowerPoint = boundingBox.getLowerPoint();
+		Point upperPoint = boundingBox.getUpperPoint();
+		if (latitude >= lowerPoint.getLatitude() && latitude <= upperPoint.getLatitude()
+				&& longitude >= lowerPoint.getLongitude() && longitude <= upperPoint.getLongitude()) {
+			result.add(kdTreeObject);
+		}
+		if (isLatitude) {
+			if (latitude >= lowerPoint.getLatitude() && latitude <= upperPoint.getLatitude()) {
+				search(node.getLeft(), boundingBox, false, result);
+				search(node.getRight(), boundingBox, false, result);
+			}
+			else if (latitude < lowerPoint.getLatitude()) {
+				search(node.getRight(), boundingBox, false, result);
+			}
+			else {
+				search(node.getLeft(), boundingBox, false, result);
+			}
+		}
+		else {
+			if (longitude >= lowerPoint.getLongitude() && longitude <= upperPoint.getLongitude()) {
+				search(node.getLeft(), boundingBox, true, result);
+				search(node.getRight(), boundingBox, true, result);
+			}
+			else if (longitude < lowerPoint.getLongitude()) {
+				search(node.getRight(), boundingBox, true, result);
+			}
+			else {
+				search(node.getLeft(), boundingBox, true, result);
 			}
 		}
 	}

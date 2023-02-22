@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.thegeekyasian.geoassist.kdtree.KDTree;
 import com.thegeekyasian.geoassist.kdtree.KDTreeObject;
-import com.thegeekyasian.geoassist.kdtree.Point;
+import com.thegeekyasian.geoassist.kdtree.geometry.Point;
 
 /**
  * @author thegeekyasian
