@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.thegeekyasian.geoassist.core.GeoAssistException;
 import com.thegeekyasian.geoassist.kdtree.geometry.BoundingBox;
@@ -41,6 +42,9 @@ public class KDTree<T, O> implements Serializable {
 
 	private final Map<T, KDTreeNode<T, O>> map = new ConcurrentHashMap<>();
 
+	private AtomicInteger size = new AtomicInteger(0);
+
+
 	/**
 	 * Creates a new instance of KDTree.
 	 * */
@@ -63,9 +67,8 @@ public class KDTree<T, O> implements Serializable {
 	private void insertObject(KDTreeObject<T, O> object) {
 
 		if (root == null) {
-			KDTreeNode<T, O> node = new KDTreeNode<>(object, null);
-			root = node;
-			map.put(object.getId(), node);
+			root = new KDTreeNode<>(object, null);
+			updateState(root);
 			return;
 		}
 
@@ -101,13 +104,27 @@ public class KDTree<T, O> implements Serializable {
 		}
 
 		KDTreeNode<T, O> node = new KDTreeNode<>(object, parent);
-		map.put(object.getId(), node);
+		updateState(node);
 
 		if (isLessThanCurrentValue) {
 			parent.setLeft(node);
 			return;
 		}
 		parent.setRight(node);
+	}
+
+	private void updateState(KDTreeNode<T, O> node) {
+
+		KDTreeObject<T, O> kdTreeObject = node.getKdTreeObject();
+		if(kdTreeObject == null) {
+			return;
+		}
+		size.incrementAndGet();
+
+		if (kdTreeObject.getId() == null) {
+			return;
+		}
+		map.put(kdTreeObject.getId(), node);
 	}
 
 	/**
@@ -249,7 +266,7 @@ public class KDTree<T, O> implements Serializable {
 	 * @return an integer value of size is returned.
 	 * */
 	public int getSize() {
-		return map.size();
+		return this.size.get();
 	}
 
 	/**
@@ -414,11 +431,22 @@ public class KDTree<T, O> implements Serializable {
 	}
 
 	private List<KDTreeNode<T, O>> getNodes() {
-		if (map.isEmpty()) {
-			return Collections.emptyList();
+		if (map.isEmpty() || map.size() < size.get()) {
+			List<KDTreeNode<T, O>> nodes = new ArrayList<>();
+			flattenTree(root, nodes);
+			return nodes;
 		}
 
 		return new ArrayList<>(map.values());
+	}
+
+	private void flattenTree(KDTreeNode<T, O> node, List<KDTreeNode<T, O>> nodes) {
+		if (node == null) {
+			return;
+		}
+		flattenTree(node.getLeft(), nodes);
+		nodes.add(node);
+		flattenTree(node.getRight(), nodes);
 	}
 
 	private KDTreeNode<T, O> buildBalancedTree(List<KDTreeNode<T, O>> nodes,
