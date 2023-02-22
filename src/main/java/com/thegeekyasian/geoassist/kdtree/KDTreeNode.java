@@ -13,8 +13,6 @@ public class KDTreeNode<T, O> {
 
 	private KDTreeNode<T, O> right;
 
-	private int depth;
-
 	public KDTreeNode<T, O> getParent() {
 		return parent;
 	}
@@ -39,12 +37,11 @@ public class KDTreeNode<T, O> {
 		this.right = right;
 	}
 
-	public KDTreeNode(KDTreeObject<T, O> kdTreeObject, int depth, KDTreeNode<T, O> parent) {
+	public KDTreeNode(KDTreeObject<T, O> kdTreeObject, KDTreeNode<T, O> parent) {
 		this.kdTreeObject = kdTreeObject;
 		this.parent = parent;
 		this.left = null;
 		this.right = null;
-		this.depth = depth;
 	}
 
 	public double value(boolean isLatitude) {
@@ -60,13 +57,5 @@ public class KDTreeNode<T, O> {
 
 	public void setKdTreeObject(KDTreeObject<T, O> kdTreeObject) {
 		this.kdTreeObject = kdTreeObject;
-	}
-
-	public int getDepth() {
-		return depth;
-	}
-
-	public void setDepth(int depth) {
-		this.depth = depth;
 	}
 }

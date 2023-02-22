@@ -2,6 +2,7 @@ package com.thegeekyasian.geoassist.kdtree;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,9 +60,8 @@ public class KDTree<T, O> implements Serializable {
 
 	private void insertObject(KDTreeObject<T, O> object) {
 
-		int depth = 0;
 		if (root == null) {
-			KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, null);
+			KDTreeNode<T, O> node = new KDTreeNode<>(object, null);
 			root = node;
 			map.put(object.getId(), node);
 			return;
@@ -96,10 +96,9 @@ public class KDTree<T, O> implements Serializable {
 
 			// Move to the alternate dimension and continue the iteration
 			isLatitude = !isLatitude;
-			depth++;
 		}
 
-		KDTreeNode<T, O> node = new KDTreeNode<>(object, depth, parent);
+		KDTreeNode<T, O> node = new KDTreeNode<>(object, parent);
 		map.put(object.getId(), node);
 
 		if (isLessThanCurrentValue) {
@@ -354,46 +353,44 @@ public class KDTree<T, O> implements Serializable {
 	 *
 	 */
 	public void balance() {
-		// If the tree is empty, there's nothing to balance
-		if (root == null) {
-			return;
-		}
-
-		// Build an array of all nodes in the tree
-		List<KDTreeNode<T, O>> nodeList = new ArrayList<>();
-		collectNodes(nodeList);
-
-		// Sort the nodes by their x-coordinate and y-coordinate, alternately
-		nodeList.sort(new NodeComparator<>());
-
-		// Rebuild the tree by recursively dividing the array and creating sub-trees
-		root = buildTree(nodeList, null, 0, nodeList.size() - 1, 0);
+		root = buildBalancedTree(getNodes(), null, true);
 	}
 
-	private void collectNodes(List<KDTreeNode<T, O>> nodeList) {
+	private List<KDTreeNode<T, O>> getNodes() {
 		if (map.isEmpty()) {
-			return;
+			return Collections.emptyList();
 		}
-		nodeList.addAll(map.values());
+
+		return new ArrayList<>(map.values());
 	}
 
-	private KDTreeNode<T, O> buildTree(List<KDTreeNode<T, O>> nodeList, KDTreeNode<T, O> parent,
-			int start, int end, int depth) {
-		if (start > end) {
+	private KDTreeNode<T, O> buildBalancedTree(List<KDTreeNode<T, O>> nodes,
+			KDTreeNode<T, O> parent, boolean isLatitude) {
+		if (nodes.isEmpty()) {
 			return null;
 		}
 
-		int mid = start + (end - start) / 2;
-		KDTreeNode<T, O> node = nodeList.get(mid);
+		// Sort the nodes along the splitting dimension (latitude or longitude)
+		nodes.sort((o1, o2) -> {
+					Point o1Point = o1.getKdTreeObject().getPoint();
+					Point o2Point = o2.getKdTreeObject().getPoint();
+					if (isLatitude) {
+						return Double.compare(o1Point.getLatitude(),
+								o2Point.getLatitude());
+					}
+					return Double.compare(o1Point.getLongitude(),
+							o2Point.getLongitude());
+				}
+		);
 
-		int nextDepth = depth + 1;
+		// Find the index of the median node in the list of nodes
+		int medianIndex = nodes.size() / 2;
+		KDTreeNode<T, O> medianNode = nodes.get(medianIndex);
 
-		node.setDepth(depth);
-		node.setParent(parent);
-		node.setLeft(buildTree(nodeList, node, start, mid - 1, nextDepth));
-		node.setRight(buildTree(nodeList, node, mid + 1, end, nextDepth));
-
-		return node;
+		medianNode.setParent(parent);
+		medianNode.setLeft(buildBalancedTree(nodes.subList(0, medianIndex), medianNode, !isLatitude));
+		medianNode.setRight(buildBalancedTree(nodes.subList(medianIndex + 1, nodes.size()), medianNode, !isLatitude));
+		return medianNode;
 	}
 
 	private double getHaversineDistance(Point point1, Point point2) {
