@@ -94,3 +94,33 @@ GeoAssist-K-DTree_Balanced.findNearestNeighbor  1000000  avgt    5  175.640 ± 1
 
 ![image](https://user-images.githubusercontent.com/30790884/219823261-1da8a378-547e-42b3-a6a6-e49f6c7e4189.png)
 </details>
+
+<details>
+<summary>Find in Bounding Box (Range)</summary>
+
+### Geo Assist (Unbalanced Tree - Unordered Insertion)
+```
+Benchmark                                           (size)  Mode  Cnt        Score         Error  Units
+BenchmartkTestFindInRangeKDTree.findInBoundingBox        1  avgt    5       88.187 ±       4.961  ns/op
+BenchmartkTestFindInRangeKDTree.findInBoundingBox       10  avgt    5      139.346 ±      20.322  ns/op
+BenchmartkTestFindInRangeKDTree.findInBoundingBox      100  avgt    5      498.641 ±      78.023  ns/op
+BenchmartkTestFindInRangeKDTree.findInBoundingBox     1000  avgt    5     2792.645 ±     213.063  ns/op
+BenchmartkTestFindInRangeKDTree.findInBoundingBox    10000  avgt    5    21140.278 ±    1462.801  ns/op
+BenchmartkTestFindInRangeKDTree.findInBoundingBox   100000  avgt    5   215418.108 ±   89959.892  ns/op
+BenchmartkTestFindInRangeKDTree.findInBoundingBox  1000000  avgt    5  4342689.110 ± 6536300.246  ns/op
+```
+### Geo Assist (Balanced Tree)
+```
+Benchmark                                                   (size)  Mode  Cnt        Score         Error  Units
+BenchmartkTestFindInRangeBalancedKDTree.findInBoundingBox        1  avgt    5       90.031 ±       6.118  ns/op
+BenchmartkTestFindInRangeBalancedKDTree.findInBoundingBox       10  avgt    5      131.786 ±      21.054  ns/op
+BenchmartkTestFindInRangeBalancedKDTree.findInBoundingBox      100  avgt    5      445.764 ±      73.761  ns/op
+BenchmartkTestFindInRangeBalancedKDTree.findInBoundingBox     1000  avgt    5     2372.449 ±     134.461  ns/op
+BenchmartkTestFindInRangeBalancedKDTree.findInBoundingBox    10000  avgt    5    13433.933 ±    1954.600  ns/op
+BenchmartkTestFindInRangeBalancedKDTree.findInBoundingBox   100000  avgt    5   148760.146 ±  112781.482  ns/op
+BenchmartkTestFindInRangeBalancedKDTree.findInBoundingBox  1000000  avgt    5  3082303.098 ± 2681755.414  ns/op
+```
+
+### Summary
+![image](https://user-images.githubusercontent.com/30790884/221034325-5304666c-bb51-412d-ba67-ccb34e2522d0.png)
+</details>
