@@ -1,10 +1,31 @@
-# Geo Assist
+<br />
+<p align="center">
+  <a href="https://github.com/thegeekyasian/geo-assist">
+    <img src="https://user-images.githubusercontent.com/30790884/221645138-0ce492cf-bbf8-4b5c-b3b0-0d87e76806c0.png" alt="Logo" height=100>
+  </a>
 
-[![Discord](https://img.shields.io/badge/discord-geoassist-purple)](https://discord.gg/8Xe2Ds4BWj)
-[![Twitter](https://img.shields.io/badge/twitter-thegeekyasian-9cf)](https://www.twitter.com/thegeekyasian)
+  <h3 align="center">Geo Assist</h3>
 
----
-
+  <p align="center">
+    A library to manage and query your geo-spatial data efficiently.
+    <br />
+    <br />
+    <a href="https://github.com/thegeekyasian/geo-assist/issues">Report a Bug</a>
+    ·
+    <a href="https://github.com/thegeekyasian/geo-assist/issues">Request a Feature</a>
+  </p>
+  
+  <p align="center">
+   <a href="https://discord.gg/8Xe2Ds4BWj" target="_blank">
+    <img src="https://img.shields.io/badge/discord-geoassist-purple" alt="Logo">
+  </a>
+  
+  
+   <a href="https://www.twitter.com/thegeekyasian" target="_blank">
+    <img src="https://img.shields.io/badge/twitter-thegeekyasian-9cf" alt="Logo">
+  </a>
+  </p>
+</p>
 
 ## What is it?
 Geo assist is library that allows users to perform insertion and query operations on the spatial data. 
