@@ -23,11 +23,11 @@
 </p>
 
 ## ⚡️ What is it?
-Geo assist is library that allows users to perform insertion and query operations on the spatial data. 
+Geo assist is a library that allows users to perform insertion and query operations on spatial data.
 
-It enables users to create a spatial engine by loading objects with spatial references, such as latitude/longitude, in-memory.
+It enables users to create a spatial engine by loading objects with spatial references, such as latitude/longitude, in memory.
 
-The goal of this project is to enable the use of complex search algorithms, by tweaking them for geo-spatial operations.
+The project aims to enable the use of complex search algorithms, by tweaking them for geospatial operations.
 
 ## 📖 How to?
 
