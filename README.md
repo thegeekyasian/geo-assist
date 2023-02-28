@@ -1,40 +1,35 @@
-<br />
+<h1 align="center">
+   <a href="https://github.com/thegeekyasian/geo-assist">
+   <img src="https://user-images.githubusercontent.com/30790884/221882235-459941b2-abaf-4790-9fc3-0d8bfa0239ac.png" alt="Logo" height=150>
+   </a>
+   <br />
+   Geo Assist
+</h1>
 <p align="center">
-  <a href="https://github.com/thegeekyasian/geo-assist">
-    <img src="https://user-images.githubusercontent.com/30790884/221645138-0ce492cf-bbf8-4b5c-b3b0-0d87e76806c0.png" alt="Logo" height=100>
-  </a>
-
-  <h3 align="center">Geo Assist</h3>
-
-  <p align="center">
-    A library to manage and query your geo-spatial data efficiently.
-    <br />
-    <br />
-    <a href="https://github.com/thegeekyasian/geo-assist/issues">Report a Bug</a>
-    ·
-    <a href="https://github.com/thegeekyasian/geo-assist/issues">Request a Feature</a>
-  </p>
-  
-  <p align="center">
+   Manage and query your geo-spatial data efficiently.
+   <br />
+   <br />
+   <a href="https://github.com/thegeekyasian/geo-assist/issues">Report a Bug</a>
+   ·
+   <a href="https://github.com/thegeekyasian/geo-assist/issues">Request a Feature</a>
+</p>
+<p align="center">
    <a href="https://discord.gg/8Xe2Ds4BWj" target="_blank">
-    <img src="https://img.shields.io/badge/discord-geoassist-purple" alt="Logo">
-  </a>
-  
-  
+   <img src="https://img.shields.io/badge/discord-geoassist-purple" alt="Logo">
+   </a>
    <a href="https://www.twitter.com/thegeekyasian" target="_blank">
-    <img src="https://img.shields.io/badge/twitter-thegeekyasian-9cf" alt="Logo">
-  </a>
-  </p>
+   <img src="https://img.shields.io/badge/twitter-thegeekyasian-9cf" alt="Logo">
+   </a>
 </p>
 
-## What is it?
+## ⚡️ What is it?
 Geo assist is library that allows users to perform insertion and query operations on the spatial data. 
 
 It enables users to create a spatial engine by loading objects with spatial references, such as latitude/longitude, in-memory.
 
 The goal of this project is to enable the use of complex search algorithms, by tweaking them for geo-spatial operations.
 
-## How to?
+## 📖 How to?
 
 ### Install:
 Geo-assist is available on maven repository and can be imported to your project. 
@@ -47,7 +42,7 @@ Geo-assist is available on maven repository and can be imported to your project.
 </dependency>
 ```
 
-### K-d Tree:
+### 🌳 K-d Tree:
 
 K-d Tree, formally called K-Dimensional Trees, are one of the best options when storing and retrieving objects based on geospatial parameters.
 
@@ -108,5 +103,15 @@ boolean ok = kdTree.delete(5);
 ```
 
 This is how simple it has been made to query your geo-spatial data.
+
+## ⭐️ Project assistance
+
+If you want to say **thank you** or/and support active development of `Geo Assist`:
+
+- Add a [GitHub Star](https://github.com/thegeekyasian/geo-assist) to the project.
+- Tweet about project [on your Twitter](https://twitter.com/intent/tweet?text=Manage%20and%20query%20your%20%23geospatial%20data%20efficiently%20with%20%23GeoAssist%0A%0A%23java%20%23programming%20%23gis%20%23opensource%20%23coding&url=https%3A%2F%2Fgithub.com%2Fthegeekyasian%2Fgeo-assist%2F).
+- Write interesting articles about project on [Dev.to](https://dev.to/), [Medium](https://medium.com/) or personal blog.
+
+Together, we can make this project **better** every day! ❤️
 
 Feel free to [contact me](https://thegeekyasian.com/contact/) or write me an email at [hello@thegeekyasian.com](mailto:hello@thegeekyasian.com)
