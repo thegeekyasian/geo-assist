@@ -75,7 +75,7 @@ List<KDTreeObject<Long, Object>> nearestNeighbors =
 ```
 
 #### Find in Bounding Box (range)
-You cna also find of objects in a bounding box for the provided range.
+You can also find of objects in a bounding box for the provided range.
 The `findInRange` method searches the k-d tree for all nodes whose coordinates fall within a given bounding box. This is useful for finding all points within a specific geographic region or for performing spatial queries on a set of points. The method takes in a BoundingBox object that defines the range to search within, and returns a list of KDTreeObject objects whose coordinates fall within the bounding box.
 
 Here is how you can use `find in range`:
@@ -111,7 +111,9 @@ If you want to say **thank you** or/and support active development of `Geo Assis
 - Add a [GitHub Star](https://github.com/thegeekyasian/geo-assist) to the project.
 - Tweet about project [on your Twitter](https://twitter.com/intent/tweet?text=Manage%20and%20query%20your%20%23geospatial%20data%20efficiently%20with%20%23GeoAssist%0A%0A%23java%20%23programming%20%23gis%20%23opensource%20%23coding&url=https%3A%2F%2Fgithub.com%2Fthegeekyasian%2Fgeo-assist%2F).
 - Write interesting articles about project on [Dev.to](https://dev.to/), [Medium](https://medium.com/) or personal blog.
+- [Create an issue](https://github.com/thegeekyasian/geo-assist/issues/new) to open discussion threads or new feature requests.
+- Contribute to the project for any new features.
 
 Together, we can make this project **better** every day! ❤️
 
-Feel free to [contact me](https://thegeekyasian.com/contact/) or write me an email at [hello@thegeekyasian.com](mailto:hello@thegeekyasian.com)
+For any questions, discussions or support you can join the [Geo Assist Discord Server](https://discord.gg/8Xe2Ds4BWj).
