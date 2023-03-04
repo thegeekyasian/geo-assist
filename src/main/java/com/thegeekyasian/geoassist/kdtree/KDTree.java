@@ -1,30 +1,32 @@
 package com.thegeekyasian.geoassist.kdtree;
 
+import com.thegeekyasian.geoassist.core.GeoAssistException;
+import com.thegeekyasian.geoassist.kdtree.geometry.BoundingBox;
+import com.thegeekyasian.geoassist.kdtree.geometry.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.thegeekyasian.geoassist.core.GeoAssistException;
-import com.thegeekyasian.geoassist.kdtree.geometry.BoundingBox;
-import com.thegeekyasian.geoassist.kdtree.geometry.Point;
-
 /**
  * @author thegeekyasian
  *
+ * <p>
  * This is an implementation of a two-dimensional KD-Tree that enables
  * efficient range searching and lookup for point data. Points can be
  * dynamically inserted into the tree to build it. The KD-Tree supports
  * point equality queries and range queries, providing fast retrieval of the data.
+ * </p>
  *
+ * <p>
  * It is important to note that the structure of a KD-Tree is dependent on the
  * order insertion. If points are inserted in a coherent manner
  * (such as being monotonic in one or both dimensions), the tree may become unbalanced.
  * This can greatly impact the efficiency of queries.
+ * </p>
  *
  * @param <T>
  *     describes the identifier of the K-d Tree Object,
@@ -42,7 +44,7 @@ public class KDTree<T, O> implements Serializable {
 
 	private final Map<T, KDTreeNode<T, O>> map = new ConcurrentHashMap<>();
 
-	private AtomicInteger size = new AtomicInteger(0);
+	private final AtomicInteger size = new AtomicInteger(0);
 
 
 	/**
@@ -59,12 +61,18 @@ public class KDTree<T, O> implements Serializable {
 	 *
 	 * @param kdTreeObject KDTreeObject holds the custom object,
 	 * identifier along with the Point (latitude/longitude coordinates) of the object.
+     *
+     * @throws GeoAssistException is thrown when a duplicate ID is provided.
 	 * */
 	public void insert(KDTreeObject<T, O> kdTreeObject) {
 		insertObject(kdTreeObject);
 	}
 
 	private void insertObject(KDTreeObject<T, O> object) {
+
+		if (getById(object.getId()) != null) {
+			throw new GeoAssistException("Duplicate object provided.");
+		}
 
 		if (root == null) {
 			root = new KDTreeNode<>(object, null);
@@ -278,9 +286,10 @@ public class KDTree<T, O> implements Serializable {
 	 * If not found, the method returns `null` otherwise.
 	 * */
 	public KDTreeObject<T, O> getById(T id) {
-		return Optional.ofNullable(map.get(id))
-				.map(KDTreeNode::getKdTreeObject)
-				.orElse(null);
+		return Optional.ofNullable(id)
+            .flatMap(i -> Optional.ofNullable(map.get(id))
+                .map(KDTreeNode::getKdTreeObject))
+            .orElse(null);
 	}
 
 	/**
