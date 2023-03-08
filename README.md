@@ -23,9 +23,10 @@
 </p>
 
 ## ⚡️ What is it?
-Geo assist is a library that allows users to perform insertion and query operations on spatial data.
 
-It enables users to create a spatial engine by loading objects with spatial references, such as latitude/longitude, in memory.
+Geo Assist is an open-source Java library designed to simplify the process of working with spatial data. With an implementation of KD Trees, users can efficiently store and query spatial data such as latitude/longitude coordinates. 
+
+By providing a streamlined interface for complex geospatial operations, Geo Assist enables developers to build powerful and accurate search algorithms for applications such as geospatial analysis, location-based services, and more.
 
 The project aims to enable the use of complex search algorithms, by tweaking them for geospatial operations.
 
