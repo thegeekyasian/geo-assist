@@ -3,7 +3,10 @@ package com.thegeekyasian.geoassist.kdtree.geometry;
 import com.thegeekyasian.geoassist.core.GeoAssistException;
 
 /**
- * @author thegeekyasian
+ * The Point class represents a point in the geographic coordinate system, with a latitude and longitude.
+ * It provides a Builder class for constructing instances of the Point class.
+ *
+ * @author The Geeky Asian
  */
 public class Point {
 	private double latitude;
@@ -16,7 +19,7 @@ public class Point {
 	}
 
 	public double getLatitude() {
-		return latitude;
+		return this.latitude;
 	}
 
 	public void setLatitude(double latitude) {
@@ -24,7 +27,7 @@ public class Point {
 	}
 
 	public double getLongitude() {
-		return longitude;
+		return this.longitude;
 	}
 
 	public void setLongitude(double longitude) {

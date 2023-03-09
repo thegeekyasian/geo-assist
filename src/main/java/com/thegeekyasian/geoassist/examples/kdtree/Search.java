@@ -7,9 +7,14 @@ import com.thegeekyasian.geoassist.kdtree.KDTreeObject;
 import com.thegeekyasian.geoassist.kdtree.geometry.Point;
 
 /**
- * @author thegeekyasian
+ * Search provides an example implementation and usage of KDTrees.
+ *
+ * @author The Geeky Asian
  */
-public class Search {
+public final class Search {
+
+	private Search() {
+	}
 
 	public static void main(String... args) {
 

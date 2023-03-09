@@ -7,18 +7,15 @@ import com.thegeekyasian.geoassist.core.GeoAssistException;
 import com.thegeekyasian.geoassist.kdtree.geometry.BoundingBox;
 import com.thegeekyasian.geoassist.kdtree.geometry.Point;
 import com.thegeekyasian.geoassist.kdtree.geometry.Point.Builder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
- * @author thegeekyasian
+ * The TestKDTree class is a test class for the KD-Tree data structure.
+ * It is used to test the insertion and searching of objects in the KD-Tree.
+ *
+ * @author The Geeky Asian
  */
 public class TestKDTree {
 
@@ -26,72 +23,72 @@ public class TestKDTree {
 
 	@Test
 	public void testInsertion() {
-		assertEquals(kdTree.getSize(), 9);
+		Assertions.assertEquals(this.kdTree.getSize(), 9);
 	}
 
 	@Test
 	public void testDeletion() {
-		boolean deleted = kdTree.delete("2");
-		assertTrue(deleted);
+		boolean deleted = this.kdTree.delete("2");
+		Assertions.assertTrue(deleted);
 	}
 
 	@Test
 	public void testGetByID() {
-		KDTreeObject<String, Object> kdTreeObject = kdTree.getById("4");
+		KDTreeObject<String, Object> kdTreeObject = this.kdTree.getById("4");
 
-		assertEquals(kdTreeObject.getId(), "4");
-		assertEquals(kdTreeObject.getPoint().getLatitude(), 25.1903843);
-		assertEquals(kdTreeObject.getPoint().getLongitude(), 55.2798557);
-		assertNull(kdTreeObject.getData());
+		Assertions.assertEquals(kdTreeObject.getId(), "4");
+		Assertions.assertEquals(kdTreeObject.getPoint().getLatitude(), 25.1903843);
+		Assertions.assertEquals(kdTreeObject.getPoint().getLongitude(), 55.2798557);
+		Assertions.assertNull(kdTreeObject.getData());
 	}
 
 	@Test
 	public void testGetByID_returnsNullForNonExistentObject() {
-		KDTreeObject<String, Object> kdTreeObject = kdTree.getById("11");
-		assertNull(kdTreeObject);
+		KDTreeObject<String, Object> kdTreeObject = this.kdTree.getById("11");
+		Assertions.assertNull(kdTreeObject);
 	}
 
 	@Test
 	public void testUpdate() {
-		kdTree.update("3", "test-data");
-		KDTreeObject<String, Object> kdTreeObject = kdTree.getById("3");
-		assertEquals(kdTreeObject.getData(), "test-data");
+		this.kdTree.update("3", "test-data");
+		KDTreeObject<String, Object> kdTreeObject = this.kdTree.getById("3");
+		Assertions.assertEquals(kdTreeObject.getData(), "test-data");
 	}
 
 	@Test
 	public void testUpdate_throwsNotFoundException() {
 
-		GeoAssistException geoAssistException = assertThrows(GeoAssistException.class,
-				() -> kdTree.update("100", "test-data"));
+		GeoAssistException geoAssistException = Assertions.assertThrows(GeoAssistException.class,
+				() -> this.kdTree.update("100", "test-data"));
 
-		assertNotNull(geoAssistException);
-		assertEquals(geoAssistException.getMessage(), "No object found for provided ID");
+		Assertions.assertNotNull(geoAssistException);
+		Assertions.assertEquals(geoAssistException.getMessage(), "No object found for provided ID");
 	}
 
 	@Test
 	public void testFindNearestNeighbors() {
-		List<KDTreeObject<String, Object>> nearestNeighbors = kdTree.findNearestNeighbor(
+		List<KDTreeObject<String, Object>> nearestNeighbors = this.kdTree.findNearestNeighbor(
 				new Builder()
 						.latitude(25.2012544)
 						.longitude(55.2569389)
 						.build(), 2);
 
-		assertEquals(4, nearestNeighbors.size());
-		assertEquals("1", nearestNeighbors.get(0).getId());
-		assertEquals("5", nearestNeighbors.get(1).getId());
-		assertEquals("7", nearestNeighbors.get(2).getId());
-		assertEquals("2", nearestNeighbors.get(3).getId());
+		Assertions.assertEquals(4, nearestNeighbors.size());
+		Assertions.assertEquals("1", nearestNeighbors.get(0).getId());
+		Assertions.assertEquals("5", nearestNeighbors.get(1).getId());
+		Assertions.assertEquals("7", nearestNeighbors.get(2).getId());
+		Assertions.assertEquals("2", nearestNeighbors.get(3).getId());
 	}
 
 	@Test
 	public void testFindNearestNeighbors_returnsEmptyListForNoNearestNeighbors() {
-		List<KDTreeObject<String, Object>> nearestNeighbors = kdTree.findNearestNeighbor(
+		List<KDTreeObject<String, Object>> nearestNeighbors = this.kdTree.findNearestNeighbor(
 				new Builder()
 						.latitude(0.2012544)
 						.longitude(55.2569389)
 						.build(), 2);
 
-		assertEquals(0, nearestNeighbors.size());
+		Assertions.assertEquals(0, nearestNeighbors.size());
 	}
 
 	@Test
@@ -126,8 +123,8 @@ public class TestKDTree {
 		kdTree.balance();
 		boolean afterBalancing = kdTree.isBalanced();
 
-		assertFalse(beforeBalancing);
-		assertTrue(afterBalancing);
+		Assertions.assertFalse(beforeBalancing);
+		Assertions.assertTrue(afterBalancing);
 	}
 
 	@Test
@@ -238,12 +235,12 @@ public class TestKDTree {
 	private void assertBoundingBoxSearch(List<String> expectedIDs,
 			List<KDTreeObject<String, Object>> objects) {
 
-		assertNotNull(objects);
-		assertFalse(objects.isEmpty());
-		assertEquals(expectedIDs.size(), objects.size());
+		Assertions.assertNotNull(objects);
+		Assertions.assertFalse(objects.isEmpty());
+		Assertions.assertEquals(expectedIDs.size(), objects.size());
 
 		for (int i = 0; i < objects.size(); i++) {
-			assertEquals(expectedIDs.get(i), objects.get(i).getId());
+			Assertions.assertEquals(expectedIDs.get(i), objects.get(i).getId());
 		}
 	}
 
@@ -267,12 +264,12 @@ public class TestKDTree {
 				.longitude(55.2811432)
 				.build());
 
-		assertEquals(3, kdTree.getSize());
+		Assertions.assertEquals(3, kdTree.getSize());
 	}
 
 	@BeforeEach
 	public void beforeEach() {
-		kdTree = new KDTree<>();
+		this.kdTree = new KDTree<>();
 		String[] coordinates = new String[] {
 				"25.1967512,55.2732038",
 				"25.1962077,55.2714443",
@@ -285,7 +282,7 @@ public class TestKDTree {
 				"25.0763827,55.1616669"
 		};
 
-		init(kdTree, coordinates);
+		init(this.kdTree, coordinates);
 	}
 
 	public static void init(KDTree<String, Object> kdTree, String[] coordinates) {

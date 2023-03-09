@@ -1,7 +1,14 @@
 package com.thegeekyasian.geoassist.kdtree;
 
 /**
- * @author thegeekyasian
+ * The KDTreeNode class represents a node in a KD-Tree, which is a binary search tree that is optimized for searching
+ * in k-dimensional space. Each node in the tree represents a point in the k-dimensional space.
+ *
+ * @param <T> the type of object used to represent the point in the k-dimensional space.
+ *
+ * @param <O> the type of object associated with the point in the k-dimensional space.
+ *
+ * @author The Geeky Asian
  */
 public class KDTreeNode<T, O> {
 
@@ -14,7 +21,7 @@ public class KDTreeNode<T, O> {
 	private KDTreeNode<T, O> right;
 
 	public KDTreeNode<T, O> getParent() {
-		return parent;
+		return this.parent;
 	}
 
 	public void setParent(KDTreeNode<T, O> parent) {
@@ -22,7 +29,7 @@ public class KDTreeNode<T, O> {
 	}
 
 	public KDTreeNode<T, O> getLeft() {
-		return left;
+		return this.left;
 	}
 
 	public void setLeft(KDTreeNode<T, O> left) {
@@ -30,7 +37,7 @@ public class KDTreeNode<T, O> {
 	}
 
 	public KDTreeNode<T, O> getRight() {
-		return right;
+		return this.right;
 	}
 
 	public void setRight(KDTreeNode<T, O> right) {
@@ -52,7 +59,7 @@ public class KDTreeNode<T, O> {
 	}
 
 	public KDTreeObject<T, O> getKdTreeObject() {
-		return kdTreeObject;
+		return this.kdTreeObject;
 	}
 
 	public void setKdTreeObject(KDTreeObject<T, O> kdTreeObject) {

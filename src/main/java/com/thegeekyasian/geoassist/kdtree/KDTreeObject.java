@@ -3,7 +3,9 @@ package com.thegeekyasian.geoassist.kdtree;
 import com.thegeekyasian.geoassist.kdtree.geometry.Point;
 
 /**
- * @author thegeekyasian
+ * The KDTreeObject class represents an object that can be inserted into a KD-Tree.
+ * Each object is associated with a point in the k-dimensional space and has
+ * an identifier of type T and a data object of type O.
  *
  * @param <T>
  *     describes the identifier of the K-d Tree Object,
@@ -12,8 +14,10 @@ import com.thegeekyasian.geoassist.kdtree.geometry.Point;
  * @param <O>
  *     describes the object that is inserted in the tree.
  *     For example Vendor, Restaurant, Franchise, etc.
+ *
+ * @author The Geeky Asian
  */
-public class KDTreeObject<T, O> {
+public final class KDTreeObject<T, O> {
 
 	private T id;
 
@@ -28,7 +32,7 @@ public class KDTreeObject<T, O> {
 	}
 
 	public T getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(T id) {
@@ -36,7 +40,7 @@ public class KDTreeObject<T, O> {
 	}
 
 	public O getData() {
-		return data;
+		return this.data;
 	}
 
 	public void setData(O data) {
@@ -44,7 +48,7 @@ public class KDTreeObject<T, O> {
 	}
 
 	public Point getPoint() {
-		return point;
+		return this.point;
 	}
 
 	public void setPoint(Point point) {
