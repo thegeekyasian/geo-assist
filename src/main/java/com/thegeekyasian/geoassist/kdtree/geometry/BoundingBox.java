@@ -3,10 +3,16 @@ package com.thegeekyasian.geoassist.kdtree.geometry;
 import com.thegeekyasian.geoassist.core.GeoAssistException;
 
 /**
- * @author thegeekyasian
+ * The BoundingBox class represents a rectangular region in 2D space.
+ * It is defined by a lower-left and an upper-right point.
+ *
+ * @author The Geeky Asian
  */
 public class BoundingBox {
 
+	/**
+	 * The lower-left point of the bounding box.
+	 */
 	private Point lowerPoint;
 
 	private Point upperPoint;
@@ -17,7 +23,7 @@ public class BoundingBox {
 	}
 
 	public Point getLowerPoint() {
-		return lowerPoint;
+		return this.lowerPoint;
 	}
 
 	public void setLowerPoint(Point lowerPoint) {
@@ -25,7 +31,7 @@ public class BoundingBox {
 	}
 
 	public Point getUpperPoint() {
-		return upperPoint;
+		return this.upperPoint;
 	}
 
 	public void setUpperPoint(Point upperPoint) {
