@@ -39,7 +39,7 @@ Geo-assist is available on maven repository and can be imported to your project.
 <dependency>
     <groupId>com.thegeekyasian</groupId>
     <artifactId>geo-assist</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
