@@ -92,6 +92,34 @@ public class TestKDTree {
 	}
 
 	@Test
+	public void testFindNearest() {
+		KDTreeNearestNeighbor<String, Object> nearestNeighbor = this.kdTree.findNearest(
+			new Builder()
+				.latitude(25.2028848)
+				.longitude(55.289930)
+				.build(), 2);
+
+		Assertions.assertNotNull(nearestNeighbor);
+		Assertions.assertEquals(1.1603729958857059, nearestNeighbor.getDistance());
+		Assertions.assertEquals("6", nearestNeighbor.getKdTreeObject().getId());
+	}
+
+	@Test
+	public void testFindNearest_whenExistingPointIsProvided_returnsZeroDistance() {
+		KDTreeNearestNeighbor<String, Object> nearestNeighbor = this.kdTree.findNearest(
+			new Builder()
+				.latitude(25.2012544)
+				.longitude(55.2569389)
+				.build(), 2);
+
+		Assertions.assertNotNull(nearestNeighbor);
+		Assertions.assertEquals(0.0, nearestNeighbor.getDistance());
+		Assertions.assertEquals("7", nearestNeighbor.getKdTreeObject().getId());
+
+		System.out.println();
+	}
+
+	@Test
 	public void testBalancing() {
 
 		KDTree<String, Object> kdTree = new KDTree<>();
