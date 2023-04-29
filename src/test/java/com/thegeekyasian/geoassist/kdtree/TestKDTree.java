@@ -92,6 +92,47 @@ public class TestKDTree {
 	}
 
 	@Test
+	public void testFindNearest() {
+		KDTreeNearestNeighbor<String, Object> nearestNeighbor = this.kdTree.findNearest(
+			new Builder()
+				.latitude(25.2028848)
+				.longitude(55.289930)
+				.build(), 2);
+
+		Assertions.assertNotNull(nearestNeighbor);
+		Assertions.assertEquals(1.1603729958857059, nearestNeighbor.getDistance());
+		Assertions.assertEquals("6", nearestNeighbor.getKdTreeObject().getId());
+	}
+
+	@Test
+	public void testFindNearest_whenExistingPointIsProvided_returnsZeroDistance() {
+		KDTreeNearestNeighbor<String, Object> nearestNeighbor = this.kdTree.findNearest(
+			new Builder()
+				.latitude(25.2012544)
+				.longitude(55.2569389)
+				.build(), 2);
+
+		Assertions.assertNotNull(nearestNeighbor);
+		Assertions.assertNotNull(nearestNeighbor.getDistance());
+		Assertions.assertEquals(0.0, nearestNeighbor.getDistance());
+		Assertions.assertNotNull(nearestNeighbor.getKdTreeObject());
+		Assertions.assertEquals("7", nearestNeighbor.getKdTreeObject().getId());
+	}
+
+
+	@Test
+	public void testFindNearest_returnsNullWhenNotFound() {
+		KDTreeNearestNeighbor<String, Object> nearestNeighbor = this.kdTree.findNearest(
+			new Builder()
+				.latitude(25.2028848)
+				.longitude(55.089930)
+				.build(), 2);
+
+		Assertions.assertNotNull(nearestNeighbor);
+		Assertions.assertNull(nearestNeighbor.getKdTreeObject());
+	}
+
+	@Test
 	public void testBalancing() {
 
 		KDTree<String, Object> kdTree = new KDTree<>();

@@ -230,6 +230,97 @@ public class KDTree<T, O> implements Serializable {
 	}
 
 	/**
+	 * Finds a single nearest-most neighbor to a given point
+	 * with the provided distance in the k-d tree.
+	 *
+	 * @param point Location (latitude/longitude) coordinates
+	 * of the reference point to find the nearest neighbors for.
+	 *
+	 * @param distance Maximum distance to find the nearest neighbors in.
+	 *
+	 * @return @return the nearest neighbor to the given point within the specified distance.
+	 * */
+	public KDTreeNearestNeighbor<T, O> findNearest(Point point, double distance) {
+		// Initialize the object to store the nearest neighbor and its distance.
+		KDTreeNearestNeighbor<T, O> nearestNeighbor = new KDTreeNearestNeighbor<>();
+		// Call the recursive helper method with the root node, point, distance, and closestPoints list
+		findNearest(this.root, point, distance, 0, nearestNeighbor);
+		// Return the list of the closest points
+		return nearestNeighbor;
+	}
+
+	private void findNearest(KDTreeNode<T, O> node, Point point, double distance, int depth,
+		KDTreeNearestNeighbor<T, O> nearestNeighbor) {
+		if (node == null) {
+			return;
+		}
+
+		double currentDistance = getHaversineDistance(node.getKdTreeObject().getPoint(), point);
+
+		// If the current node's point is within the maximum distance and closer than the nearest neighbor found so far,
+		// set the current node as the nearest neighbor, or is the first node to be visited i.e. distance is null.
+		if (currentDistance <= distance &&
+			(nearestNeighbor.getDistance() == null
+				|| currentDistance <= nearestNeighbor.getDistance())) {
+			nearestNeighbor.setKdTreeObject(node.getKdTreeObject());
+			nearestNeighbor.setDistance(currentDistance);
+		}
+
+		// Determine which dimension to compare based on the depth of the current node in the K-d tree
+		int dim = depth % 2;
+
+		// If the `dim`-th coordinate of the input point is less than the `dim`-th coordinate of the current node's point,
+		// continue searching in the left subtree and check if the absolute difference between the `dim`-th coordinates
+		// is less than or equal to the maximum distance
+		if (dim == 0) {
+			if (point.getLatitude() < node.getKdTreeObject().getPoint().getLatitude()) {
+				findNearest(node.getLeft(), point, distance, depth + 1, nearestNeighbor);
+
+				// check if the difference in latitudes is less than or equal to the provided distance
+				// if so, also search the right subtree
+				if (node.getRight() != null &&
+					Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude())
+						<= distance) {
+					findNearest(node.getRight(), point, distance, depth + 1, nearestNeighbor);
+				}
+			}
+			else {
+				// If the `dim`-th coordinate of the input point is greater than or equal to the `dim`-th coordinate of the current node's point,
+				// continue searching in the right subtree and check if the absolute difference between the `dim`-th coordinates
+				// is less than or equal to the maximum distance
+				findNearest(node.getRight(), point, distance, depth + 1, nearestNeighbor);
+
+				// check if the difference in latitudes is less than or equal to the provided distance
+				// if so, also search the left subtree
+				if (node.getLeft() != null &&
+					Math.abs(node.getKdTreeObject().getPoint().getLatitude() - point.getLatitude())
+						<= distance) {
+					findNearest(node.getLeft(), point, distance, depth + 1, nearestNeighbor);
+				}
+			}
+		}
+		else {
+			// using the same logic as above but for longitude i.e. the second dimension.
+			if (point.getLongitude() < node.getKdTreeObject().getPoint().getLongitude()) {
+				findNearest(node.getLeft(), point, distance, depth + 1, nearestNeighbor);
+				if (node.getRight() != null && Math.abs(
+					node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude())
+					<= distance) {
+					findNearest(node.getRight(), point, distance, depth + 1, nearestNeighbor);
+				}
+			}
+			else {
+				findNearest(node.getRight(), point, distance, depth + 1, nearestNeighbor);
+				if (node.getLeft() != null && Math.abs(
+					node.getKdTreeObject().getPoint().getLongitude() - point.getLongitude())
+					<= distance) {
+					findNearest(node.getLeft(), point, distance, depth + 1, nearestNeighbor);
+				}
+			}
+		}
+	}
+
+	/**
 	 * <p>
 	 *     Searches the k-d tree for all nodes whose
 	 *     coordinates fall within the given bounding box.
