@@ -113,10 +113,23 @@ public class TestKDTree {
 				.build(), 2);
 
 		Assertions.assertNotNull(nearestNeighbor);
+		Assertions.assertNotNull(nearestNeighbor.getDistance());
 		Assertions.assertEquals(0.0, nearestNeighbor.getDistance());
+		Assertions.assertNotNull(nearestNeighbor.getKdTreeObject());
 		Assertions.assertEquals("7", nearestNeighbor.getKdTreeObject().getId());
+	}
 
-		System.out.println();
+
+	@Test
+	public void testFindNearest_returnsNullWhenNotFound() {
+		KDTreeNearestNeighbor<String, Object> nearestNeighbor = this.kdTree.findNearest(
+			new Builder()
+				.latitude(25.2028848)
+				.longitude(55.089930)
+				.build(), 2);
+
+		Assertions.assertNotNull(nearestNeighbor);
+		Assertions.assertNull(nearestNeighbor.getKdTreeObject());
 	}
 
 	@Test
