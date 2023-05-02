@@ -39,7 +39,7 @@ Geo-assist is available on maven repository and can be imported to your project.
 <dependency>
     <groupId>com.thegeekyasian</groupId>
     <artifactId>geo-assist</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -73,6 +73,23 @@ Point point = new Point.Builder()
 				.build();
 List<KDTreeObject<Long, Object>> nearestNeighbors = 
         kdTree.findNearestNeighbor(point, 2); // 2 kilometers based on haversine distance.
+```
+
+
+#### Find The Nearest-Most Neighbor
+
+Another feature provided allows you to find the nearest most object. From the objects that you can find in using the `findNearestNeighbor` feature, this method allows you to get the closest one, based on the provided location and distance.
+
+The method is called `findNearest`, and returns a wrapper that holds the closes `KDTreeObject` and its `distance` from the provided location.
+
+The API can be invoked as below:
+``` java
+Point point = new Point.Builder()
+				.latitude(25.2012544)
+				.longitude(55.2569389)
+				.build();
+KDTreeNearestNeighbor<String, Object> nearestNeighbor = 
+        this.kdTree.findNearest(point, 2); // 2 kilometers based on haversine distance.
 ```
 
 #### Find in Bounding Box (range)
